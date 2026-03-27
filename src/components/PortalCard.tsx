@@ -21,7 +21,7 @@ export interface Portal {
 
 export default function PortalCard({ portal, index }: { portal: Portal; index: number }) {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, setIsLoginModalOpen } = useAuth();
   const [currentStatus, setCurrentStatus] = useState<'active' | 'maintenance' | 'offline' | 'loading'>(
     portal.status === 'maintenance' ? 'maintenance' : portal.status === 'offline' ? 'offline' : 'loading'
   );
@@ -141,9 +141,9 @@ export default function PortalCard({ portal, index }: { portal: Portal; index: n
       return;
     }
 
-    // Not logged in → go to login
+    // Not logged in → trigger login modal
     if (!user) {
-      router.push('/login');
+      setIsLoginModalOpen(true);
       return;
     }
 

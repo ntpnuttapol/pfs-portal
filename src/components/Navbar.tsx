@@ -5,7 +5,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
-import { User, LayoutDashboard, Settings, Users, UserCog, Menu, X, ChevronDown, LogOut } from 'lucide-react'
+import { User, LayoutDashboard, Settings, Users, UserCog, Menu, X, ChevronDown, LogOut, LogIn } from 'lucide-react'
+import LoginModal from './LoginModal'
 
 const adminLinks = [
   { href: '/admin/user-approval', label: 'User Approval', icon: Users },
@@ -16,7 +17,7 @@ const adminLinks = [
 export default function Navbar() {
   const pathname = usePathname()
   const router = useRouter()
-  const { user, isLoading, isAdmin, signOut } = useAuth()
+  const { user, isLoading, isAdmin, signOut, isLoginModalOpen, setIsLoginModalOpen } = useAuth()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false)
 
@@ -128,12 +129,13 @@ export default function Navbar() {
               </button>
             </>
           ) : (
-            <Link
-              href="/login"
-              className="bg-foreground text-background px-4 py-2 rounded-full hover:opacity-90 transition-opacity"
+            <button
+              onClick={() => setIsLoginModalOpen(true)}
+              className="bg-foreground text-background px-4 py-2 rounded-full hover:opacity-90 transition-opacity flex items-center gap-2 text-sm font-semibold"
             >
+              <LogIn className="h-4 w-4" />
               Sign In
-            </Link>
+            </button>
           )}
         </div>
 
@@ -218,18 +220,26 @@ export default function Navbar() {
                   </button>
                 </>
               ) : (
-                <Link
-                  href="/login"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-center rounded-2xl bg-foreground px-4 py-3 text-background"
+                <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(false)
+                    setIsLoginModalOpen(true)
+                  }}
+                  className="flex items-center justify-center gap-2 rounded-2xl bg-foreground px-4 py-3 text-background font-semibold"
                 >
+                  <LogIn className="h-4 w-4" />
                   Sign In
-                </Link>
+                </button>
               )}
             </div>
           </div>
         </div>
       )}
+
+      <LoginModal 
+        isOpen={isLoginModalOpen} 
+        onClose={() => setIsLoginModalOpen(false)} 
+      />
     </nav>
   )
 }
