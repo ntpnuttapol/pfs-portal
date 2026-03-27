@@ -16,7 +16,7 @@ const DEFAULT_PORTALS: Portal[] = [
     icon: 'users',
     status: 'active',
     ssoSystemId: 'hr-employee',
-    ssoTargetUrl: 'http://localhost:3003/login',
+    ssoTargetUrl: 'https://pfs-system.vercel.app/login',
   },
   {
     id: 2,
@@ -71,7 +71,7 @@ const DEFAULT_PORTALS: Portal[] = [
 
 // SSO configuration map - always applied regardless of data source
 const SSO_CONFIG: Record<string, { ssoSystemId: string; ssoTargetUrl: string }> = {
-  'Hr-employee': { ssoSystemId: 'hr-employee', ssoTargetUrl: 'http://localhost:3003/login' },
+  'Hr-employee': { ssoSystemId: 'hr-employee', ssoTargetUrl: 'https://pfs-system.vercel.app/login' },
   'Moldshop': { ssoSystemId: 'moldshop', ssoTargetUrl: 'http://localhost:3001/login' },
   'Project-Finishing': { ssoSystemId: 'project-finishing', ssoTargetUrl: 'http://localhost:3002/login' },
 };
