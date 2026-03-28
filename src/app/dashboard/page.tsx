@@ -388,8 +388,6 @@ export default function DashboardPage() {
       {/* Same Portal Grid as Directory */}
       <PortalGrid
         sectionClassName="pb-12 px-6 bg-background"
-        title="Launch directory"
-        description="Search, filter, and open any connected or public portal from your central hub."
       />
     </div>
   )
