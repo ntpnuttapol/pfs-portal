@@ -179,7 +179,7 @@ export default function SSOLinkPage() {
         <div className="max-w-7xl mx-auto">
           {/* Back button */}
           <Link
-            href="/dashboard"
+            href="/"
             className="inline-flex items-center gap-2 text-sm text-foreground/60 hover:text-foreground mb-6 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />

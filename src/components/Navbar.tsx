@@ -63,14 +63,6 @@ export default function Navbar() {
           <Link href="/#about" className={linkClassName(false)}>
             About
           </Link>
-          {user && (
-            <Link href="/dashboard" className={linkClassName(pathname === '/dashboard')}>
-              <span className="flex items-center gap-2">
-                <LayoutDashboard className="h-4 w-4" />
-                Dashboard
-              </span>
-            </Link>
-          )}
         </div>
 
         <div className="hidden md:flex items-center gap-3 text-sm font-medium">
@@ -170,18 +162,6 @@ export default function Navbar() {
               About
             </Link>
 
-            {user && (
-              <Link
-                href="/dashboard"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`rounded-2xl px-4 py-3 transition-colors ${pathname === '/dashboard' ? 'bg-foreground text-background' : 'text-foreground/75 hover:bg-background hover:text-foreground'}`}
-              >
-                <span className="flex items-center gap-2">
-                  <LayoutDashboard className="h-4 w-4" />
-                  Dashboard
-                </span>
-              </Link>
-            )}
 
             {user && isAdmin && (
               <div className="mt-2 border-t border-card-border pt-3">

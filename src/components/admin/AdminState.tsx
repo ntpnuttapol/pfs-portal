@@ -98,7 +98,7 @@ export function AdminAccessDenied({
       <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
         {signedIn ? (
           <Link
-            href="/dashboard"
+            href="/"
             className="inline-flex items-center gap-2 rounded-full bg-foreground px-4 py-2.5 text-sm font-medium text-background transition hover:opacity-90"
           >
             <ArrowLeft className="h-4 w-4" />

@@ -11,7 +11,6 @@ export default function Footer() {
 
   const staticLinks = [
     { href: '/#portals', label: 'Portals', icon: ArrowUpRight },
-    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/sso-docs', label: 'SSO Docs', icon: FileText },
   ];
 

@@ -18,7 +18,7 @@ export default function SSODocsPage() {
       <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <Link 
-            href="/dashboard" 
+            href="/" 
             className="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors mb-4"
           >
             <ArrowLeft className="w-4 h-4" />

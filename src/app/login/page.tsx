@@ -31,7 +31,7 @@ export default function LoginPage() {
   // Auto-redirect if already logged in
   useEffect(() => {
     if (user) {
-      router.push('/dashboard')
+      router.push('/')
     }
   }, [user, router])
 
@@ -71,7 +71,7 @@ export default function LoginPage() {
         if (error) {
           setError('Invalid username or password')
         } else {
-          router.push('/dashboard')
+          router.push('/')
           router.refresh()
         }
       } catch {
