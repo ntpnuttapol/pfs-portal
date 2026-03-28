@@ -58,7 +58,7 @@ export default function Navbar() {
 
         <div className="hidden md:flex items-center gap-2 text-sm font-medium">
           <Link href="/#portals" className={linkClassName(pathname === '/')}>
-            Directory
+            Portals
           </Link>
           <Link href="/#about" className={linkClassName(false)}>
             About
@@ -160,7 +160,7 @@ export default function Navbar() {
               onClick={() => setIsMobileMenuOpen(false)}
               className={`rounded-2xl px-4 py-3 transition-colors ${pathname === '/' ? 'bg-foreground text-background' : 'text-foreground/75 hover:bg-background hover:text-foreground'}`}
             >
-              Directory
+              Portals
             </Link>
             <Link
               href="/#about"

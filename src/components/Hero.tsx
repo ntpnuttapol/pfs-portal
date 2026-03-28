@@ -1,47 +1,64 @@
 "use client";
 
 import { motion } from 'framer-motion';
+import { Zap, ArrowDown } from 'lucide-react';
 
 export default function Hero() {
   return (
-    <section className="relative pt-12 pb-16 overflow-hidden px-6">
+    <section className="relative pt-28 pb-20 overflow-hidden px-6">
       {/* Background patterns */}
-      <div className="absolute inset-0 bg-dot-pattern opacity-50 -z-10" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-blue-500/5 rounded-full blur-[120px] -z-10" />
+      <div className="absolute inset-0 bg-dot-pattern opacity-40 -z-10" />
+      <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-gradient-to-b from-blue-500/8 via-indigo-500/5 to-transparent rounded-full blur-[100px] -z-10" />
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent -z-10" />
 
-      <div className="max-w-4xl mx-auto text-center">
+      <div className="max-w-5xl mx-auto text-center">
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight">
-            All your portals.<br />
-            <span className="text-foreground/60">Beautifully organized.</span>
+          <div className="inline-flex items-center gap-2 rounded-full border border-card-border bg-card px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-foreground/55 shadow-sm mb-8">
+            <Zap className="h-3.5 w-3.5 text-amber-500" />
+            Internal Portal Hub
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-bold tracking-tight mb-6 leading-[1.05]">
+            Your workspace.
+            <br />
+            <span className="bg-gradient-to-r from-foreground/65 via-foreground/45 to-foreground/30 bg-clip-text text-transparent">
+              One place.
+            </span>
           </h1>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
         >
-          <p className="text-xl md:text-2xl text-foreground/70 mb-10 max-w-2xl mx-auto font-medium">
-            Access internal tools, dashboard applications, and external websites all from one unified, sleek dashboard.
+          <p className="text-lg md:text-xl text-foreground/55 mb-12 max-w-xl mx-auto font-medium leading-relaxed">
+            Access every internal system, dashboard, and tool your team needs — organized, fast, and always ready.
           </p>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          className="flex justify-center"
         >
-          <a href="#portals" className="bg-foreground text-background px-8 py-3.5 rounded-full font-medium text-lg hover:opacity-90 transition-all hover:scale-105 active:scale-95">
-            Browse Portals
-          </a>
-          <a href="#about" className="bg-card text-foreground px-8 py-3.5 rounded-full font-medium text-lg border border-card-border hover:bg-card-border transition-all hover:scale-105 active:scale-95 shadow-sm">
-            Learn More
+          <a
+            href="#portals"
+            className="group flex items-center gap-2 text-sm font-medium text-foreground/40 hover:text-foreground/70 transition-colors"
+          >
+            <span>Explore portals</span>
+            <ArrowDown className="h-4 w-4 group-hover:translate-y-0.5 transition-transform" />
           </a>
         </motion.div>
       </div>

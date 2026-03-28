@@ -10,7 +10,7 @@ export default function Footer() {
   const { user, setIsLoginModalOpen } = useAuth();
 
   const staticLinks = [
-    { href: '/#portals', label: 'Portal Directory', icon: ArrowUpRight },
+    { href: '/#portals', label: 'Portals', icon: ArrowUpRight },
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/sso-docs', label: 'SSO Docs', icon: FileText },
   ];

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { ExternalLink, Server, Globe, BarChart3, AppWindow, Users, Settings, LineChart, Car, Fuel, Lock, Loader2 } from 'lucide-react';
+import { ExternalLink, Server, Globe, BarChart3, AppWindow, Users, Settings, LineChart, Car, Fuel, Lock, Loader2, ArrowUpRight } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 export interface Portal {
@@ -69,85 +69,49 @@ export default function PortalCard({ portal, index }: { portal: Portal; index: n
   const requiresLogin = isInternalSystem && !user;
   const isMaintenance = currentStatus === 'maintenance';
   const isExternalLink = portal.category === 'external' || !isInternalSystem;
-  const statusLabel = currentStatus === 'active'
-    ? 'Available'
+
+  // Status dot color
+  const statusDotColor = currentStatus === 'active'
+    ? 'bg-emerald-500'
+    : currentStatus === 'maintenance'
+      ? 'bg-amber-500'
+      : currentStatus === 'loading'
+        ? 'bg-foreground/20 animate-pulse'
+        : 'bg-red-500';
+
+  const statusText = currentStatus === 'active'
+    ? 'Online'
     : currentStatus === 'maintenance'
       ? 'Maintenance'
       : currentStatus === 'loading'
-        ? 'Checking status'
-        : 'Temporarily unavailable';
-  const statusClassName = currentStatus === 'active'
-    ? 'bg-green-500/10 text-green-600'
-    : currentStatus === 'maintenance'
-      ? 'bg-amber-500/10 text-amber-600'
-      : currentStatus === 'loading'
-        ? 'bg-foreground/10 text-foreground/40 animate-pulse'
-        : 'bg-red-500/10 text-red-600';
-  const accessLabel = isExternalLink
-    ? 'External website'
+        ? 'Checking...'
+        : 'Offline';
+
+  // Access badge
+  const accessInfo = isExternalLink
+    ? { label: 'External', className: 'text-slate-500 bg-slate-500/8' }
     : requiresLogin
-      ? 'Sign-in required'
+      ? { label: 'Sign in required', className: 'text-amber-600 bg-amber-500/8' }
       : hasSso
-        ? 'SSO ready'
-        : 'Direct link';
-  const accessClassName = isExternalLink
-    ? 'bg-slate-500/10 text-slate-600 border-slate-200'
-    : requiresLogin
-      ? 'bg-amber-500/10 text-amber-600 border-amber-500/20'
-      : hasSso
-        ? 'bg-green-500/10 text-green-600 border-green-500/20'
-        : 'bg-blue-500/10 text-blue-600 border-blue-500/20';
-  const actionLabel = ssoLoading
-    ? 'Connecting...'
-    : isMaintenance
-      ? 'Unavailable during maintenance'
-      : requiresLogin
-        ? 'Sign in to access'
-        : isExternalLink
-          ? 'Open website'
-          : hasSso
-            ? 'Launch with SSO'
-            : 'Open portal';
-  const helperText = ssoError
-    ? 'We couldn’t create a secure SSO handoff. Click again to retry.'
-    : isMaintenance
-      ? 'This system is temporarily unavailable while maintenance is in progress.'
-      : currentStatus === 'offline'
-        ? 'The latest health check could not reach this system. You can still try opening it.'
-        : requiresLogin
-          ? 'Sign in once to unlock internal tools and launch them from your dashboard.'
-          : hasSso
-            ? 'You will be redirected with a single sign-on session.'
-            : isExternalLink
-              ? 'This link opens outside the hub in a new browser tab.'
-              : 'This system opens directly in a new browser tab.';
-  const actionClassName = isMaintenance
-    ? 'bg-foreground/5 text-foreground/40'
-    : requiresLogin
-      ? 'bg-amber-500/10 text-amber-700'
-      : 'bg-foreground text-background';
+        ? { label: 'SSO', className: 'text-emerald-600 bg-emerald-500/8' }
+        : { label: 'Direct', className: 'text-blue-600 bg-blue-500/8' };
 
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     setSsoError(false);
 
-    if (isMaintenance) {
-      return;
-    }
+    if (isMaintenance) return;
 
-    // External websites → open directly
     if (isExternalLink) {
       window.open(portal.url, '_blank');
       return;
     }
 
-    // Not logged in → trigger login modal
     if (!user) {
       setIsLoginModalOpen(true);
       return;
     }
 
-    // Logged in + has SSO → generate token and redirect
     if (hasSso) {
       setSsoLoading(true);
       try {
@@ -171,86 +135,80 @@ export default function PortalCard({ portal, index }: { portal: Portal; index: n
       return;
     }
 
-    // Logged in + no SSO → open directly
     window.open(portal.url, '_blank');
   };
 
   return (
     <motion.button
       onClick={handleClick}
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.5, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
-      whileHover={ssoLoading || isMaintenance ? undefined : { y: -8, scale: 1.02 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.4, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
+      whileHover={ssoLoading || isMaintenance ? undefined : { y: -4 }}
       disabled={ssoLoading || isMaintenance}
       className="group block w-full text-left"
     >
-      <div className={`bg-card border rounded-3xl p-6 h-full shadow-[0_2px_12px_rgba(0,0,0,0.04),0_8px_32px_rgba(0,0,0,0.06)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.08),0_16px_48px_rgba(0,0,0,0.12)] transition-all duration-300 ${
-        ssoError ? 'border-red-400' : 'border-card-border'
-      } ${ssoLoading ? 'opacity-70 cursor-wait' : ''} ${isMaintenance ? 'opacity-80 cursor-not-allowed' : ''}`}>
-        <div className="flex justify-between items-start mb-6">
-          <div className="p-3 bg-background rounded-2xl shadow-sm border border-card-border group-hover:bg-foreground group-hover:text-background transition-colors duration-300">
+      <div className={`relative bg-card border rounded-[24px] p-5 h-full transition-all duration-300 ${
+        ssoError ? 'border-red-300 shadow-[0_0_0_1px_rgba(239,68,68,0.1)]' : 'border-card-border'
+      } ${ssoLoading ? 'opacity-60 cursor-wait' : ''} ${isMaintenance ? 'opacity-70 cursor-not-allowed' : ''} hover:shadow-[0_8px_40px_rgba(0,0,0,0.08)] hover:border-foreground/10`}>
+        
+        {/* Top row: Icon + Status */}
+        <div className="flex items-start justify-between mb-4">
+          <div className={`flex h-11 w-11 items-center justify-center rounded-[14px] border border-card-border bg-background transition-all duration-300 group-hover:bg-foreground group-hover:text-background group-hover:border-foreground group-hover:shadow-lg`}>
             {ssoLoading ? (
-              <Loader2 size={24} className="animate-spin opacity-80" />
+              <Loader2 className="h-5 w-5 animate-spin" />
             ) : (
-              <Icon size={24} className="opacity-80" />
+              <Icon className="h-5 w-5 opacity-70 group-hover:opacity-100" />
             )}
           </div>
-          <div className="flex items-center space-x-2">
-            <div className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${statusClassName}`}>
-              {statusLabel}
+
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
+              <div className={`h-1.5 w-1.5 rounded-full ${statusDotColor}`} />
+              <span className="text-[11px] font-medium text-foreground/40">{statusText}</span>
             </div>
-            {requiresLogin ? (
-              <Lock size={20} className="text-amber-500" />
-            ) : !isMaintenance ? (
-              <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <ExternalLink size={20} className="text-foreground/50" />
-              </div>
-            ) : null}
+            {requiresLogin && (
+              <Lock className="h-3.5 w-3.5 text-amber-500/70" />
+            )}
           </div>
         </div>
 
-        <div>
-          <h3 className="text-xl font-semibold mb-2 tracking-tight">{portal.title}</h3>
-          <p className="text-foreground/60 text-sm leading-relaxed line-clamp-2">
+        {/* Title + Description */}
+        <div className="mb-4">
+          <h3 className="text-[15px] font-semibold mb-1 tracking-tight text-foreground group-hover:text-foreground">
+            {portal.title}
+          </h3>
+          <p className="text-[13px] text-foreground/50 leading-relaxed line-clamp-2">
             {portal.description}
           </p>
         </div>
 
-        <div className="mt-5 border-t border-card-border pt-4">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className={`text-xs font-medium px-2 py-1 rounded-lg border uppercase tracking-wider ${accessClassName}`}>
-              {accessLabel}
-            </span>
-            {currentStatus === 'offline' && (
-              <span className="text-xs font-medium px-2 py-1 rounded-lg border border-red-200 bg-red-500/10 text-red-600 uppercase tracking-wider">
-                Retry recommended
-              </span>
+        {/* Bottom row: Access badge + Arrow */}
+        <div className="flex items-center justify-between pt-3 border-t border-card-border/60">
+          <span className={`text-[10px] font-semibold uppercase tracking-[0.08em] px-2 py-1 rounded-md ${accessInfo.className}`}>
+            {accessInfo.label}
+          </span>
+
+          <div className={`flex h-7 w-7 items-center justify-center rounded-full transition-all duration-300 ${
+            isMaintenance ? 'bg-foreground/5 text-foreground/20' 
+            : requiresLogin ? 'bg-amber-500/8 text-amber-600 group-hover:bg-amber-500 group-hover:text-white'
+            : 'bg-foreground/5 text-foreground/30 group-hover:bg-foreground group-hover:text-background'
+          }`}>
+            {ssoLoading ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : requiresLogin ? (
+              <Lock className="h-3 w-3" />
+            ) : (
+              <ArrowUpRight className="h-3.5 w-3.5" />
             )}
-          </div>
-
-          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm leading-relaxed text-foreground/60 sm:max-w-[70%]">
-              {helperText}
-            </p>
-
-            <span className={`inline-flex shrink-0 items-center gap-2 rounded-full px-3 py-2 text-sm font-medium ${actionClassName}`}>
-              {actionLabel}
-              {ssoLoading ? (
-                <Loader2 size={16} className="animate-spin" />
-              ) : requiresLogin ? (
-                <Lock size={16} />
-              ) : (
-                <ExternalLink size={16} />
-              )}
-            </span>
           </div>
         </div>
 
+        {/* SSO Error */}
         {ssoError && (
-          <div className="mt-3 rounded-2xl border border-red-200 bg-red-50 px-3 py-3">
-            <p className="text-xs font-medium text-red-600">We couldn’t create a secure SSO session for this portal. Click again to retry.</p>
+          <div className="mt-3 rounded-xl bg-red-50 border border-red-100 px-3 py-2">
+            <p className="text-[11px] font-medium text-red-600">SSO handoff failed. Click to retry.</p>
           </div>
         )}
       </div>

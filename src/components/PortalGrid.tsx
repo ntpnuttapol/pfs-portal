@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from 'react';
-import { Search } from 'lucide-react';
+import { Search, Filter, X as XIcon } from 'lucide-react';
 import PortalCard, { Portal } from './PortalCard';
 import { supabase, isSupabaseConfigured } from '@/utils/supabase';
+import { motion } from 'framer-motion';
 
 // Default portals shown when Supabase is not configured or on error
 const DEFAULT_PORTALS: Portal[] = [
@@ -78,20 +79,15 @@ const SSO_CONFIG: Record<string, { ssoSystemId: string; ssoTargetUrl: string }> 
 
 type PortalGridProps = {
   sectionClassName?: string;
-  title?: string;
-  description?: string;
 };
 
 export default function PortalGrid({
-  sectionClassName = 'pt-24 pb-12 px-6 bg-background',
-  title = 'Directory',
-  description = 'A curated list of essential portals and applications. Everything you need to get your work done, beautifully organized.',
+  sectionClassName = 'pb-16 px-6 bg-background',
 }: PortalGridProps) {
   const [portals, setPortals] = useState<Portal[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
 
   const categories = useMemo(
     () => ['all', ...new Set(portals.map((portal) => portal.category ?? 'system'))],
@@ -103,19 +99,16 @@ export default function PortalGrid({
 
     return portals.filter((portal) => {
       const normalizedCategory = portal.category ?? 'system';
-      const normalizedStatus = portal.status ?? 'active';
       const matchesSearch = !query || [portal.title, portal.description, normalizedCategory].some((value) =>
         value.toLowerCase().includes(query)
       );
       const matchesCategory = categoryFilter === 'all' || normalizedCategory === categoryFilter;
-      const matchesStatus = statusFilter === 'all' || normalizedStatus === statusFilter;
 
-      return matchesSearch && matchesCategory && matchesStatus;
+      return matchesSearch && matchesCategory;
     });
-  }, [portals, searchTerm, categoryFilter, statusFilter]);
+  }, [portals, searchTerm, categoryFilter]);
 
-  const activeCount = portals.filter((portal) => (portal.status ?? 'active') === 'active').length;
-  const hasFilters = searchTerm.trim().length > 0 || categoryFilter !== 'all' || statusFilter !== 'all';
+  const hasFilters = searchTerm.trim().length > 0 || categoryFilter !== 'all';
 
   const formatLabel = (value: string) =>
     value.replace(/-/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
@@ -160,42 +153,34 @@ export default function PortalGrid({
   return (
     <section id="portals" className={sectionClassName}>
       <div className="max-w-7xl mx-auto">
-        <div className="mb-10 flex flex-col gap-6">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <h2 className="text-3xl font-bold tracking-tight mb-4">{title}</h2>
-              <p className="text-foreground/60 max-w-2xl text-lg">{description}</p>
+        {/* Minimal toolbar */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <div className="flex items-center gap-3">
+            <div className="relative flex-1 sm:flex-initial">
+              <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground/35" />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                placeholder="Search portals..."
+                className="w-full sm:w-72 rounded-2xl border border-card-border bg-card py-2.5 pl-10 pr-4 text-sm text-foreground outline-none transition focus:border-foreground/15 focus:ring-2 focus:ring-foreground/5 placeholder:text-foreground/35"
+              />
             </div>
 
-            <div className="flex flex-wrap items-center gap-3 text-sm text-foreground/60">
-              <span className="rounded-full border border-card-border bg-card px-3 py-1.5 shadow-sm">
-                {portals.length} portals
-              </span>
-              <span className="rounded-full border border-card-border bg-card px-3 py-1.5 shadow-sm">
-                {activeCount} active
-              </span>
-            </div>
-          </div>
-
-          <div className="rounded-3xl border border-card-border bg-card p-4 shadow-sm">
-            <div className="grid grid-cols-1 gap-3 lg:grid-cols-[minmax(0,2fr)_minmax(180px,1fr)_minmax(180px,1fr)_auto]">
-              <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground/40" />
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(event) => setSearchTerm(event.target.value)}
-                  placeholder="Search portals by name, description, or category"
-                  className="w-full rounded-2xl border border-card-border bg-background py-3 pl-10 pr-4 text-sm text-foreground outline-none transition focus:border-foreground/20 focus:ring-2 focus:ring-foreground/10"
-                />
-              </div>
-
+            <div className="relative">
+              <Filter className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-foreground/35" />
               <select
                 value={categoryFilter}
                 onChange={(event) => setCategoryFilter(event.target.value)}
-                className="rounded-2xl border border-card-border bg-background px-4 py-3 text-sm text-foreground outline-none transition focus:border-foreground/20 focus:ring-2 focus:ring-foreground/10"
+                className="appearance-none rounded-2xl border border-card-border bg-card pl-9 pr-8 py-2.5 text-sm text-foreground outline-none transition focus:border-foreground/15 focus:ring-2 focus:ring-foreground/5 cursor-pointer"
               >
-                <option value="all">All categories</option>
+                <option value="all">All</option>
                 {categories
                   .filter((category) => category !== 'all')
                   .map((category) => (
@@ -204,51 +189,51 @@ export default function PortalGrid({
                     </option>
                   ))}
               </select>
+            </div>
 
-              <select
-                value={statusFilter}
-                onChange={(event) => setStatusFilter(event.target.value)}
-                className="rounded-2xl border border-card-border bg-background px-4 py-3 text-sm text-foreground outline-none transition focus:border-foreground/20 focus:ring-2 focus:ring-foreground/10"
-              >
-                <option value="all">All statuses</option>
-                <option value="active">Active</option>
-                <option value="maintenance">Maintenance</option>
-                <option value="offline">Offline</option>
-              </select>
-
+            {hasFilters && (
               <button
                 type="button"
                 onClick={() => {
                   setSearchTerm('');
                   setCategoryFilter('all');
-                  setStatusFilter('all');
                 }}
-                disabled={!hasFilters}
-                className="rounded-2xl border border-card-border px-4 py-3 text-sm font-medium text-foreground transition hover:bg-background disabled:cursor-not-allowed disabled:opacity-40"
+                className="flex items-center gap-1.5 rounded-2xl border border-card-border bg-card px-3 py-2.5 text-xs font-medium text-foreground/60 transition hover:bg-foreground/5 hover:text-foreground"
               >
-                Reset
+                <XIcon className="h-3.5 w-3.5" />
+                Clear
               </button>
-            </div>
-
-            <p className="mt-3 text-sm text-foreground/60">
-              Showing {filteredPortals.length} of {portals.length} portals
-            </p>
+            )}
           </div>
-        </div>
 
+          <div className="flex items-center gap-2 text-xs font-medium text-foreground/40">
+            <span className="tabular-nums">{filteredPortals.length}</span>
+            <span>of</span>
+            <span className="tabular-nums">{portals.length}</span>
+            <span>portals</span>
+          </div>
+        </motion.div>
+
+        {/* Grid */}
         {loading ? (
-          <div className="flex justify-center items-center py-20">
-            <div className="w-8 h-8 rounded-full border-2 border-foreground/20 border-t-foreground animate-spin"></div>
+          <div className="flex justify-center items-center py-24">
+            <div className="flex items-center gap-3 text-foreground/40">
+              <div className="w-5 h-5 rounded-full border-2 border-foreground/15 border-t-foreground/50 animate-spin" />
+              <span className="text-sm font-medium">Loading portals...</span>
+            </div>
           </div>
         ) : filteredPortals.length === 0 ? (
-          <div className="rounded-3xl border border-dashed border-card-border bg-card px-6 py-16 text-center shadow-sm">
-            <h3 className="text-xl font-semibold tracking-tight">No portals match your filters</h3>
-            <p className="mt-2 text-foreground/60">
-              Try a different search term or clear the current filters to see all available portals.
+          <div className="rounded-3xl border border-dashed border-card-border bg-card px-6 py-20 text-center">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-foreground/5">
+              <Search className="h-6 w-6 text-foreground/30" />
+            </div>
+            <h3 className="text-lg font-semibold tracking-tight">No portals found</h3>
+            <p className="mt-2 text-sm text-foreground/50 max-w-sm mx-auto">
+              Try a different search term or clear the filter to see all portals.
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {filteredPortals.map((portal, idx) => (
               <PortalCard key={`${portal.id}-${portal.title}-${idx}`} portal={portal} index={idx} />
             ))}
