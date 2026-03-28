@@ -32,6 +32,7 @@ export default function Navbar() {
   }
 
   return (
+    <>
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-card-border bg-background/70 px-6 py-4 backdrop-blur-md transition-all duration-300">
       <div className="max-w-7xl mx-auto flex w-full items-center justify-between gap-4">
         <Link
@@ -236,10 +237,12 @@ export default function Navbar() {
         </div>
       )}
 
-      <LoginModal 
-        isOpen={isLoginModalOpen} 
-        onClose={() => setIsLoginModalOpen(false)} 
-      />
     </nav>
+
+    <LoginModal 
+      isOpen={isLoginModalOpen} 
+      onClose={() => setIsLoginModalOpen(false)} 
+    />
+    </>
   )
 }

@@ -45,9 +45,9 @@ export async function proxy(request: NextRequest) {
        !request.nextUrl.pathname.startsWith('/api/sso/validate') &&
        !request.nextUrl.pathname.startsWith('/api/sso/users')))
   ) {
-    // no user, potentially respond by redirecting the user to the login page
+    // no user, redirect to home page (login modal will be triggered client-side)
     const url = request.nextUrl.clone()
-    url.pathname = '/login'
+    url.pathname = '/'
     return NextResponse.redirect(url)
   }
 

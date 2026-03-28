@@ -1,7 +1,10 @@
+'use client'
+
 import Link from 'next/link'
 import { AlertTriangle, ArrowLeft, Loader2, ShieldAlert } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { useAuth } from '@/contexts/AuthContext'
 
 type AdminAlertTone = 'success' | 'error' | 'info'
 
@@ -83,6 +86,8 @@ export function AdminAccessDenied({
   title = 'You do not have access to this admin page',
   description = 'This area is reserved for administrators. Please sign in with the correct account or return to the main dashboard.',
 }: AdminAccessDeniedProps) {
+  const { setIsLoginModalOpen } = useAuth()
+
   return (
     <div className="rounded-3xl border border-card-border bg-card px-6 py-16 text-center shadow-sm">
       <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-red-500/10 text-red-600">
@@ -91,13 +96,24 @@ export function AdminAccessDenied({
       <h2 className="mt-5 text-xl font-semibold tracking-tight text-foreground">{title}</h2>
       <p className="mx-auto mt-2 max-w-xl text-sm leading-relaxed text-foreground/60">{description}</p>
       <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
-        <Link
-          href={signedIn ? '/dashboard' : '/login'}
-          className="inline-flex items-center gap-2 rounded-full bg-foreground px-4 py-2.5 text-sm font-medium text-background transition hover:opacity-90"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          {signedIn ? 'Back to dashboard' : 'Sign in'}
-        </Link>
+        {signedIn ? (
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center gap-2 rounded-full bg-foreground px-4 py-2.5 text-sm font-medium text-background transition hover:opacity-90"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to dashboard
+          </Link>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setIsLoginModalOpen(true)}
+            className="inline-flex items-center gap-2 rounded-full bg-foreground px-4 py-2.5 text-sm font-medium text-background transition hover:opacity-90"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Sign in
+          </button>
+        )}
         <Link
           href="/"
           className="inline-flex items-center gap-2 rounded-full border border-card-border px-4 py-2.5 text-sm font-medium text-foreground/70 transition hover:bg-background hover:text-foreground"

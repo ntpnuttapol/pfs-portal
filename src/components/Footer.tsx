@@ -1,13 +1,17 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowUpRight, FileText, LayoutDashboard, LogIn, Shield } from 'lucide-react'; // Empty for now, but keeping the structure
+import { ArrowUpRight, FileText, LayoutDashboard, LogIn, Shield } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  const quickLinks = [
+  const { user, setIsLoginModalOpen } = useAuth();
+
+  const staticLinks = [
     { href: '/#portals', label: 'Portal Directory', icon: ArrowUpRight },
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/login', label: 'Sign In / Request Access', icon: LogIn },
     { href: '/sso-docs', label: 'SSO Docs', icon: FileText },
   ];
 
@@ -49,7 +53,7 @@ export default function Footer() {
           <div>
             <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-foreground/45">Quick links</h2>
             <div className="mt-5 space-y-3">
-              {quickLinks.map(({ href, label, icon: Icon }) => (
+              {staticLinks.map(({ href, label, icon: Icon }) => (
                 <Link
                   key={href}
                   href={href}
@@ -62,6 +66,19 @@ export default function Footer() {
                   <ArrowUpRight className="h-4 w-4 text-foreground/40" />
                 </Link>
               ))}
+              {!user && (
+                <button
+                  type="button"
+                  onClick={() => setIsLoginModalOpen(true)}
+                  className="w-full flex items-center justify-between gap-3 rounded-2xl border border-card-border bg-card px-4 py-3 text-sm font-medium text-foreground/75 transition hover:border-foreground/10 hover:bg-white hover:text-foreground"
+                >
+                  <span className="flex items-center gap-3">
+                    <LogIn className="h-4 w-4" />
+                    <span>Sign In / Request Access</span>
+                  </span>
+                  <ArrowUpRight className="h-4 w-4 text-foreground/40" />
+                </button>
+              )}
             </div>
           </div>
 

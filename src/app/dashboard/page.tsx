@@ -54,7 +54,7 @@ const ROLE_STYLES: Record<string, string> = {
 }
 
 export default function DashboardPage() {
-  const { user, isLoading, signOut, isAdmin, role } = useAuth()
+  const { user, isLoading, signOut, isAdmin, role, setIsLoginModalOpen } = useAuth()
   const router = useRouter()
   const [systemRoles, setSystemRoles] = useState<UserSystemRole[]>([])
   const [loadedUserId, setLoadedUserId] = useState<string | null>(null)
@@ -66,9 +66,10 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!isLoading && !user) {
-      router.push('/login')
+      setIsLoginModalOpen(true)
+      router.push('/')
     }
-  }, [isLoading, router, user])
+  }, [isLoading, router, user, setIsLoginModalOpen])
 
   useEffect(() => {
     if (!user?.id) {
