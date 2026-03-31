@@ -50,12 +50,36 @@ export async function PUT(
   try {
     const { userId } = await params
     const body = await request.json()
-    const { system_roles, system_id, role } = body
+    const { system_roles, system_id, role, username } = body
     
     const supabase = createClient(supabaseUrl, supabaseServiceKey, {
       auth: { autoRefreshToken: false, persistSession: false }
     })
     
+    // Update username if provided
+    if (username) {
+      // Check if username already exists for another user
+      const { data: existingUser } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('username', username)
+        .neq('id', userId)
+        .maybeSingle()
+        
+      if (existingUser) {
+        return NextResponse.json({ error: 'Username already exists' }, { status: 400, headers: corsHeaders })
+      }
+      
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ username })
+        .eq('id', userId)
+        
+      if (updateError) {
+        return NextResponse.json({ error: 'Failed to update username' }, { status: 500, headers: corsHeaders })
+      }
+    }
+
     // Handle batch update (from user management page)
     if (system_roles) {
       const defaultSystems = ['moldshop', 'hr-employee', 'polyfoam', 'booking', 'moneytrack']

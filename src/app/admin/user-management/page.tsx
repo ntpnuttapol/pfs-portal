@@ -39,6 +39,7 @@ export default function UserManagementPage() {
   const [saving, setSaving] = useState<string | null>(null)
   const [editingUser, setEditingUser] = useState<string | null>(null)
   const [editedRoles, setEditedRoles] = useState<Record<string, string>>({})
+  const [editedUsername, setEditedUsername] = useState<string>('')
   const [successMessage, setSuccessMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -73,6 +74,7 @@ export default function UserManagementPage() {
   const handleEdit = (user: User) => {
     setEditingUser(user.id)
     setEditedRoles({ ...user.system_roles })
+    setEditedUsername(user.username)
     setSuccessMessage('')
     setErrorMessage('')
   }
@@ -85,7 +87,7 @@ export default function UserManagementPage() {
       const response = await fetch(`/api/admin/user-roles/${userId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ system_roles: editedRoles })
+        body: JSON.stringify({ system_roles: editedRoles, username: editedUsername.trim() })
       })
 
       const data = await response.json()
@@ -109,6 +111,7 @@ export default function UserManagementPage() {
   const handleCancel = () => {
     setEditingUser(null)
     setEditedRoles({})
+    setEditedUsername('')
     setErrorMessage('')
   }
 
@@ -232,7 +235,20 @@ export default function UserManagementPage() {
                           </div>
                           <div>
                             <p className="font-medium text-[#1d1d1f]">{user.full_name || user.username}</p>
-                            <p className="text-sm text-[#1d1d1f]/50">@{user.username}</p>
+                            {editingUser === user.id ? (
+                              <div className="flex items-center gap-1 mt-1 mb-1">
+                                <span className="text-sm text-[#1d1d1f]/50">@</span>
+                                <input
+                                  type="text"
+                                  value={editedUsername}
+                                  onChange={(e) => setEditedUsername(e.target.value)}
+                                  className="px-2 py-0.5 text-sm border border-black/10 rounded-md bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none w-32"
+                                  placeholder="username"
+                                />
+                              </div>
+                            ) : (
+                              <p className="text-sm text-[#1d1d1f]/50">@{user.username}</p>
+                            )}
                             <p className="text-xs text-[#1d1d1f]/40">{user.email}</p>
                           </div>
                         </div>
