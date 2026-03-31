@@ -23,12 +23,12 @@ const DEFAULT_PORTALS: Portal[] = [
     id: 2,
     title: 'Moldshop',
     description: 'Management system for mold maintenance and work orders.',
-    url: 'http://localhost:3001',
+    url: 'https://moldshop.vercel.app/',
     category: 'system',
     icon: 'settings',
     status: 'active',
     ssoSystemId: 'moldshop',
-    ssoTargetUrl: 'http://localhost:3001/login',
+    ssoTargetUrl: 'https://moldshop.vercel.app/login',
   },
   {
     id: 3,
@@ -73,7 +73,7 @@ const DEFAULT_PORTALS: Portal[] = [
 // SSO configuration map - always applied regardless of data source
 const SSO_CONFIG: Record<string, { ssoSystemId: string; ssoTargetUrl: string }> = {
   'Hr-employee': { ssoSystemId: 'hr-employee', ssoTargetUrl: 'https://pfs-system.vercel.app/login' },
-  'Moldshop': { ssoSystemId: 'moldshop', ssoTargetUrl: 'http://localhost:3001/login' },
+  'Moldshop': { ssoSystemId: 'moldshop', ssoTargetUrl: 'https://moldshop.vercel.app/login' },
   'Project-Finishing': { ssoSystemId: 'project-finishing', ssoTargetUrl: 'http://localhost:3002/login' },
 };
 
