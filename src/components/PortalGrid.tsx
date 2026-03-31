@@ -34,12 +34,12 @@ const DEFAULT_PORTALS: Portal[] = [
     id: 3,
     title: 'Project-Finishing',
     description: 'Production monitoring and project finishing dashboard.',
-    url: 'https://finishing.yourdomain.com',
+    url: 'https://production-dashboard-pink.vercel.app/login',
     category: 'analytics',
     icon: 'line-chart',
     status: 'active',
     ssoSystemId: 'project-finishing',
-    ssoTargetUrl: 'http://localhost:3002/login',
+    ssoTargetUrl: 'https://production-dashboard-pink.vercel.app/login',
   },
   {
     id: 4,
@@ -74,7 +74,7 @@ const DEFAULT_PORTALS: Portal[] = [
 const SSO_CONFIG: Record<string, { ssoSystemId: string; ssoTargetUrl: string }> = {
   'Hr-employee': { ssoSystemId: 'hr-employee', ssoTargetUrl: 'https://pfs-system.vercel.app/login' },
   'Moldshop': { ssoSystemId: 'moldshop', ssoTargetUrl: 'https://moldshop.vercel.app/login' },
-  'Project-Finishing': { ssoSystemId: 'project-finishing', ssoTargetUrl: 'http://localhost:3002/login' },
+  'Project-Finishing': { ssoSystemId: 'project-finishing', ssoTargetUrl: 'https://production-dashboard-pink.vercel.app/login' },
 };
 
 type PortalGridProps = {

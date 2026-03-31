@@ -40,7 +40,7 @@ const SYSTEMS = [
     id: 'project-finishing',
     title: 'Project-Finishing',
     description: 'Production monitoring and project finishing dashboard.',
-    url: 'https://finishing.yourdomain.com',
+    url: 'https://production-dashboard-pink.vercel.app/login',
     category: 'analytics',
     icon: LineChart,
     status: 'active',
