@@ -19,6 +19,15 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const { signIn, signUp, user } = useAuth()
+
+  const resetForm = () => {
+    setUsername('')
+    setEmail('')
+    setFullName('')
+    setPassword('')
+    setConfirmPassword('')
+  }
+
   const inputClassName = 'w-full rounded-2xl border border-card-border bg-background py-3 pl-10 pr-4 text-sm text-foreground outline-none transition focus:border-foreground/20 focus:ring-2 focus:ring-foreground/10'
   const passwordInputClassName = 'w-full rounded-2xl border border-card-border bg-background py-3 pl-10 pr-12 text-sm text-foreground outline-none transition focus:border-foreground/20 focus:ring-2 focus:ring-foreground/10'
 
@@ -55,9 +64,11 @@ export default function LoginPage() {
         } else if (pendingApproval) {
           setSuccessMessage(message || 'Your registration request has been submitted and is pending admin approval.')
           setIsSignUp(false)
+          resetForm()
         } else {
           setSuccessMessage('Account created successfully! Please sign in.')
           setIsSignUp(false)
+          resetForm()
         }
       } catch {
         setError('An unexpected error occurred')
@@ -71,6 +82,7 @@ export default function LoginPage() {
         if (error) {
           setError('Invalid username or password')
         } else {
+          resetForm()
           router.push('/')
           router.refresh()
         }
