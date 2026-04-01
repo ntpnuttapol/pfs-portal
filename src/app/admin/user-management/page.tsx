@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { AdminAccessDenied, AdminAlert, AdminEmptyState, AdminLoadingState } from '@/components/admin/AdminState'
 import { Shield, Users, Edit2, Save, X, UserPlus } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { ADMIN_SYSTEMS } from '@/lib/system-access'
 
 interface User {
   id: string
@@ -16,14 +17,6 @@ interface User {
   created_at: string
   system_roles: Record<string, string>
 }
-
-const SYSTEMS = [
-  { id: 'moldshop', name: 'Moldshop', icon: '🏭' },
-  { id: 'hr-employee', name: 'HR Employee', icon: '🏥' },
-  { id: 'polyfoam', name: 'Polyfoam', icon: '🏢' },
-  { id: 'booking', name: 'Booking Car', icon: '🚗' },
-  { id: 'moneytrack', name: 'Money Track', icon: '💰' },
-]
 
 const ROLES = [
   { value: 'none', label: 'No Access', color: 'bg-gray-100 text-gray-600 border-gray-200' },
@@ -214,7 +207,7 @@ export default function UserManagementPage() {
                   <tr>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-[#1d1d1f]">User</th>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-[#1d1d1f]">Role</th>
-                    {SYSTEMS.map(system => (
+                    {ADMIN_SYSTEMS.map(system => (
                       <th key={system.id} className="px-4 py-4 text-center text-sm font-semibold text-[#1d1d1f]">
                         <div className="flex items-center justify-center gap-1.5">
                           <span>{system.icon}</span>
@@ -262,7 +255,7 @@ export default function UserManagementPage() {
                           {user.role}
                         </span>
                       </td>
-                      {SYSTEMS.map(system => {
+                      {ADMIN_SYSTEMS.map(system => {
                         const currentRole = editingUser === user.id 
                           ? editedRoles[system.id] 
                           : user.system_roles[system.id] || 'none'

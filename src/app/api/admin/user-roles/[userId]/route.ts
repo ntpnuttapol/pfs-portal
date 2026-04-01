@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { getErrorMessage } from '@/lib/error'
+import { DEFAULT_SYSTEM_IDS } from '@/lib/system-access'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -86,9 +87,7 @@ export async function PUT(
 
     // Handle batch update (from user management page)
     if (system_roles) {
-      const defaultSystems = ['moldshop', 'hr-employee', 'polyfoam', 'booking', 'moneytrack']
-      
-      for (const systemId of defaultSystems) {
+      for (const systemId of DEFAULT_SYSTEM_IDS) {
         const roleValue = system_roles[systemId] || 'none'
         
         if (roleValue === 'none') {

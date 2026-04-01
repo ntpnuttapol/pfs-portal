@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { AdminAccessDenied, AdminAlert, AdminEmptyState, AdminLoadingState } from '@/components/admin/AdminState'
 import { Check, X, UserCheck, Shield, UserPlus } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { ADMIN_SYSTEMS } from '@/lib/system-access'
 
 interface UserRequest {
   id: string
@@ -15,14 +16,6 @@ interface UserRequest {
   requested_at: string
   rejection_reason?: string
 }
-
-const SYSTEMS = [
-  { id: 'moldshop', name: 'Moldshop', icon: '🏭' },
-  { id: 'hr-employee', name: 'HR Employee', icon: '🏥' },
-  { id: 'polyfoam', name: 'Polyfoam', icon: '🏢' },
-  { id: 'booking', name: 'Booking Car', icon: '🚗' },
-  { id: 'moneytrack', name: 'Money Track', icon: '💰' },
-]
 
 const ROLES = [
   { value: 'none', label: 'No Access', color: 'bg-gray-100 text-gray-600 border-gray-200' },
@@ -350,7 +343,7 @@ export default function UserApprovalPage() {
               </div>
 
               <div className="space-y-3">
-                {SYSTEMS.map((system) => (
+                {ADMIN_SYSTEMS.map((system) => (
                   <div
                     key={system.id}
                     className="flex items-center justify-between p-4 bg-[#f4f4f6] rounded-2xl"

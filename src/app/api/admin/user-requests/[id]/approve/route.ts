@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { getErrorMessage } from '@/lib/error'
+import { DEFAULT_SYSTEM_IDS } from '@/lib/system-access'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -77,10 +78,9 @@ export async function POST(
     }
 
     // Assign system roles
-    const defaultSystems = ['moldshop', 'hr-employee', 'polyfoam', 'booking', 'moneytrack']
     const rolesToAssign = system_roles || {}
 
-    for (const systemId of defaultSystems) {
+    for (const systemId of DEFAULT_SYSTEM_IDS) {
       const role = rolesToAssign[systemId] || 'viewer'
       if (role !== 'none') {
         const { error: roleError } = await supabase.from('user_system_roles').upsert({
