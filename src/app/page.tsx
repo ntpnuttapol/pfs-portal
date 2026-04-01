@@ -1,82 +1,109 @@
-'use client'
+import type { Metadata } from 'next'
+import HomeShell from '@/components/HomeShell'
+import {
+  siteDescription,
+  siteName,
+  siteOrigin,
+} from '@/lib/site'
 
-import { useAuth } from '@/contexts/AuthContext'
-import { useRouter } from 'next/navigation'
-import PortalGrid from '@/components/PortalGrid'
-import { LogOut, Settings, Shield } from 'lucide-react'
-import Link from 'next/link'
-import { motion } from 'framer-motion'
+const homeStructuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      name: 'Polyfoam Suvarnabhumi',
+      url: siteOrigin,
+      logo: `${siteOrigin}/opengraph-image.png`,
+    },
+    {
+      '@type': 'WebSite',
+      name: siteName,
+      url: siteOrigin,
+      description: siteDescription,
+    },
+    {
+      '@type': 'CollectionPage',
+      name: 'PFS Portal Directory',
+      url: siteOrigin,
+      description: siteDescription,
+      isPartOf: {
+        '@type': 'WebSite',
+        name: siteName,
+        url: siteOrigin,
+      },
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'What is PFS Portal used for?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'PFS Portal is a centralized directory for internal systems, public resources, and SSO-enabled launch flows used across Polyfoam Suvarnabhumi.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Can users request access from the portal?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes. New users can submit an access request for approval before they get access to protected systems and workflows.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Where can developers read about the SSO flow?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Developers can review the public SSO documentation page for token validation, user mapping, and integration steps.',
+          },
+        },
+      ],
+    },
+  ],
+}
 
-export default function Home() {
-  const { user, isLoading, signOut, isAdmin, role } = useAuth()
-  const router = useRouter()
+export const metadata: Metadata = {
+  title: 'Internal Portal Directory & SSO Hub',
+  description:
+    'Browse Polyfoam Suvarnabhumi systems, request access, and launch SSO-enabled tools from the PFS Portal directory.',
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: `Internal Portal Directory & SSO Hub | ${siteName}`,
+    description:
+      'Browse Polyfoam Suvarnabhumi systems, request access, and launch SSO-enabled tools from one portal.',
+    url: '/',
+    images: [
+      {
+        url: '/opengraph-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'PFS Portal internal directory and SSO hub',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `Internal Portal Directory & SSO Hub | ${siteName}`,
+    description:
+      'Browse Polyfoam Suvarnabhumi systems, request access, and launch SSO-enabled tools from one portal.',
+    images: ['/twitter-image.png'],
+  },
+}
 
-  const handleSignOut = async () => {
-    await signOut()
-    router.push('/')
-  }
-
-  const displayName = user?.user_metadata?.full_name || user?.user_metadata?.username || user?.email?.split('@')[0] || ''
-  const roleLabel = role ? role.charAt(0).toUpperCase() + role.slice(1) : 'Member'
-
+export default function HomePage() {
   return (
-    <div className="flex flex-col w-full">
-      {/* User header — only when logged in */}
-      {!isLoading && user && (
-        <section className="pt-24 pb-2 px-6">
-          <div className="max-w-7xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-foreground text-background text-sm font-bold">
-                  {displayName.charAt(0).toUpperCase()}
-                </div>
-                <div>
-                  <h1 className="text-lg font-semibold tracking-tight">
-                    {displayName}
-                  </h1>
-                  <div className="flex items-center gap-2 text-xs text-foreground/50">
-                    <span>{user.email}</span>
-                    <span className="text-foreground/20">·</span>
-                    <span className="inline-flex items-center gap-1">
-                      <Shield className="h-3 w-3" />
-                      {roleLabel}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                {isAdmin && (
-                  <Link
-                    href="/admin/sso-link"
-                    className="flex items-center gap-1.5 rounded-full border border-card-border bg-card px-3.5 py-2 text-xs font-medium text-foreground/70 transition hover:bg-foreground/5 hover:text-foreground"
-                  >
-                    <Settings className="h-3.5 w-3.5" />
-                    Admin
-                  </Link>
-                )}
-                <button
-                  onClick={handleSignOut}
-                  className="flex items-center gap-1.5 rounded-full border border-card-border px-3.5 py-2 text-xs font-medium text-foreground/50 transition hover:bg-red-500/8 hover:text-red-600 hover:border-red-200"
-                >
-                  <LogOut className="h-3.5 w-3.5" />
-                  Sign Out
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        </section>
-      )}
-
-      {/* Portal Grid */}
-      <PortalGrid
-        sectionClassName={`${!isLoading && user ? 'pt-6' : 'pt-28'} pb-16 px-6 bg-background`}
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(homeStructuredData),
+        }}
       />
-    </div>
+      <HomeShell />
+    </>
   )
 }

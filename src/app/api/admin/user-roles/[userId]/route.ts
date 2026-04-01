@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { getErrorMessage } from '@/lib/error'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -16,7 +17,7 @@ export async function OPTIONS() {
 
 // GET /api/admin/user-roles/[userId] - Get roles for specific user
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
@@ -37,8 +38,11 @@ export async function GET(
     
     return NextResponse.json({ roles }, { headers: corsHeaders })
     
-  } catch (error: any) {
-    return NextResponse.json({ error: 'Internal error: ' + error?.message }, { status: 500, headers: corsHeaders })
+  } catch (error: unknown) {
+    return NextResponse.json(
+      { error: 'Internal error: ' + getErrorMessage(error) },
+      { status: 500, headers: corsHeaders }
+    )
   }
 }
 
@@ -137,7 +141,10 @@ export async function PUT(
     
     return NextResponse.json({ role: data }, { headers: corsHeaders })
     
-  } catch (error: any) {
-    return NextResponse.json({ error: 'Internal error: ' + error?.message }, { status: 500, headers: corsHeaders })
+  } catch (error: unknown) {
+    return NextResponse.json(
+      { error: 'Internal error: ' + getErrorMessage(error) },
+      { status: 500, headers: corsHeaders }
+    )
   }
 }

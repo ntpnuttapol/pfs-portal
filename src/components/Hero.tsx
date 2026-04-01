@@ -29,10 +29,10 @@ export default function Hero() {
           transition={{ duration: 1, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
         >
           <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-bold tracking-tight mb-6 leading-[1.05]">
-            Your workspace.
+            PFS Portal.
             <br />
             <span className="bg-gradient-to-r from-foreground/65 via-foreground/45 to-foreground/30 bg-clip-text text-transparent">
-              One place.
+              One directory.
             </span>
           </h1>
         </motion.div>
@@ -43,7 +43,7 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
         >
           <p className="text-lg md:text-xl text-foreground/55 mb-12 max-w-xl mx-auto font-medium leading-relaxed">
-            Access every internal system, dashboard, and tool your team needs — organized, fast, and always ready.
+            Explore Polyfoam Suvarnabhumi systems, dashboards, and SSO-enabled tools from one organized internal portal.
           </p>
         </motion.div>
 

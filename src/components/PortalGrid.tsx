@@ -2,80 +2,14 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { Search, Filter, X as XIcon } from 'lucide-react';
-import PortalCard, { Portal } from './PortalCard';
+import PortalCard from './PortalCard';
 import { supabase, isSupabaseConfigured } from '@/utils/supabase';
 import { motion } from 'framer-motion';
-
-// Default portals shown when Supabase is not configured or on error
-const DEFAULT_PORTALS: Portal[] = [
-  {
-    id: 1,
-    title: 'Hr-employee',
-    description: 'Human Resources and Employee Health management system.',
-    url: 'https://pfs-system.vercel.app/login',
-    category: 'system',
-    icon: 'users',
-    status: 'active',
-    ssoSystemId: 'hr-employee',
-    ssoTargetUrl: 'https://pfs-system.vercel.app/login',
-  },
-  {
-    id: 2,
-    title: 'Moldshop',
-    description: 'Management system for mold maintenance and work orders.',
-    url: 'https://moldshop.vercel.app/',
-    category: 'system',
-    icon: 'settings',
-    status: 'active',
-    ssoSystemId: 'moldshop',
-    ssoTargetUrl: 'https://moldshop.vercel.app/login',
-  },
-  {
-    id: 3,
-    title: 'Project-Finishing',
-    description: 'Production monitoring and project finishing dashboard.',
-    url: 'https://production-dashboard-pink.vercel.app/login',
-    category: 'analytics',
-    icon: 'line-chart',
-    status: 'active',
-    ssoSystemId: 'project-finishing',
-    ssoTargetUrl: 'https://production-dashboard-pink.vercel.app/login',
-  },
-  {
-    id: 4,
-    title: 'Fleet Booking',
-    description: 'Vehicle and fleet reservation management.',
-    url: 'https://polyfoampfs-bookingcar.vercel.app/',
-    category: 'system',
-    icon: 'car',
-    status: 'active',
-  },
-  {
-    id: 5,
-    title: 'Moneybill-Oil',
-    description: 'Fuel tracking and financial billing system.',
-    url: 'https://Polyfoampfs.com/moneytrack',
-    category: 'system',
-    icon: 'fuel',
-    status: 'active',
-  },
-  {
-    id: 6,
-    title: 'PFS Official Website',
-    description: 'Visit our corporate website for more information.',
-    url: 'https://www.pfs.co.th',
-    category: 'external',
-    icon: 'globe',
-    status: 'active',
-  }
-];
-
-// SSO configuration map - always applied regardless of data source
-const SSO_CONFIG: Record<string, { ssoSystemId: string; ssoTargetUrl: string }> = {
-  'Hr-employee': { ssoSystemId: 'hr-employee', ssoTargetUrl: 'https://pfs-system.vercel.app/login' },
-  'Moldshop': { ssoSystemId: 'moldshop', ssoTargetUrl: 'https://moldshop.vercel.app/login' },
-  'Project-Finishing': { ssoSystemId: 'project-finishing', ssoTargetUrl: 'https://production-dashboard-pink.vercel.app/login' },
-};
+import {
+  DEFAULT_PORTALS,
+  mergePortalData,
+  type PortalDefinition,
+} from '@/data/portals';
 
 type PortalGridProps = {
   sectionClassName?: string;
@@ -84,8 +18,9 @@ type PortalGridProps = {
 export default function PortalGrid({
   sectionClassName = 'pb-16 px-6 bg-background',
 }: PortalGridProps) {
-  const [portals, setPortals] = useState<Portal[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [portals, setPortals] = useState<PortalDefinition[]>(() =>
+    mergePortalData(DEFAULT_PORTALS)
+  );
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
 
@@ -115,7 +50,7 @@ export default function PortalGrid({
 
   useEffect(() => {
     async function fetchPortals() {
-      let portalData: Portal[] = DEFAULT_PORTALS;
+      let portalData: PortalDefinition[] = DEFAULT_PORTALS;
 
       if (isSupabaseConfigured() && supabase) {
         try {
@@ -125,34 +60,36 @@ export default function PortalGrid({
             .order('title', { ascending: true });
 
           if (!error && data && data.length > 0) {
-            portalData = data as Portal[];
+            portalData = data as PortalDefinition[];
           }
         } catch {
           // Silently fallback on exception
         }
       }
 
-      // Merge SSO config into portals
-      const merged = portalData.map(p => ({
-        ...p,
-        ...(SSO_CONFIG[p.title] || {}),
-      }));
-
-      // Add any DEFAULT_PORTALS that are missing from database (including Project-Finishing)
-      const dbTitles = new Set(merged.map(p => p.title));
-      const missingDefaults = DEFAULT_PORTALS.filter(p => !dbTitles.has(p.title));
-      const finalPortals = [...merged, ...missingDefaults];
-
-      setPortals(finalPortals);
-      setLoading(false);
+      setPortals(mergePortalData(portalData));
     }
 
-    fetchPortals();
+    void fetchPortals();
   }, []);
 
   return (
     <section id="portals" className={sectionClassName}>
       <div className="max-w-7xl mx-auto">
+        <div className="mb-8 max-w-3xl">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/45">
+            Portal Directory
+          </p>
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+            Browse systems, dashboards, and connected tools
+          </h2>
+          <p className="mt-3 text-sm leading-relaxed text-foreground/60 md:text-base">
+            Explore the public directory of business systems available through the
+            PFS Portal hub, then launch the tools you need with direct access or
+            SSO-enabled handoff.
+          </p>
+        </div>
+
         {/* Minimal toolbar */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -163,8 +100,12 @@ export default function PortalGrid({
         >
           <div className="flex items-center gap-3">
             <div className="relative flex-1 sm:flex-initial">
+              <label htmlFor="portal-search" className="sr-only">
+                Search portals
+              </label>
               <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground/35" />
               <input
+                id="portal-search"
                 type="text"
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
@@ -174,8 +115,12 @@ export default function PortalGrid({
             </div>
 
             <div className="relative">
+              <label htmlFor="portal-category" className="sr-only">
+                Filter portal category
+              </label>
               <Filter className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-foreground/35" />
               <select
+                id="portal-category"
                 value={categoryFilter}
                 onChange={(event) => setCategoryFilter(event.target.value)}
                 className="appearance-none rounded-2xl border border-card-border bg-card pl-9 pr-8 py-2.5 text-sm text-foreground outline-none transition focus:border-foreground/15 focus:ring-2 focus:ring-foreground/5 cursor-pointer"
@@ -214,15 +159,7 @@ export default function PortalGrid({
           </div>
         </motion.div>
 
-        {/* Grid */}
-        {loading ? (
-          <div className="flex justify-center items-center py-24">
-            <div className="flex items-center gap-3 text-foreground/40">
-              <div className="w-5 h-5 rounded-full border-2 border-foreground/15 border-t-foreground/50 animate-spin" />
-              <span className="text-sm font-medium">Loading portals...</span>
-            </div>
-          </div>
-        ) : filteredPortals.length === 0 ? (
+        {filteredPortals.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-card-border bg-card px-6 py-20 text-center">
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-foreground/5">
               <Search className="h-6 w-6 text-foreground/30" />
@@ -235,7 +172,7 @@ export default function PortalGrid({
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {filteredPortals.map((portal, idx) => (
-              <PortalCard key={`${portal.id}-${portal.title}-${idx}`} portal={portal} index={idx} />
+              <PortalCard key={`${portal.id}-${portal.title}`} portal={portal} index={idx} />
             ))}
           </div>
         )}

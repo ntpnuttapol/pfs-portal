@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { siteName, siteOrigin } from '@/lib/site'
 import { 
   ArrowLeft, 
   Shield, 
@@ -11,9 +12,59 @@ import {
   ArrowRight
 } from 'lucide-react'
 
+const docsStructuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Portal Directory',
+          item: `${siteOrigin}/`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: 'SSO Integration Guide',
+          item: `${siteOrigin}/sso-docs`,
+        },
+      ],
+    },
+    {
+      '@type': 'TechArticle',
+      headline: 'PFS Portal SSO Integration Guide',
+      description:
+        'Technical documentation for integrating external systems with token validation and user mapping through PFS Portal.',
+      author: {
+        '@type': 'Organization',
+        name: 'Polyfoam Suvarnabhumi',
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: siteName,
+        logo: {
+          '@type': 'ImageObject',
+          url: `${siteOrigin}/sso-docs/opengraph-image.png`,
+        },
+      },
+      mainEntityOfPage: `${siteOrigin}/sso-docs`,
+      image: `${siteOrigin}/sso-docs/opengraph-image.png`,
+    },
+  ],
+}
+
 export default function SSODocsPage() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(docsStructuredData),
+        }}
+      />
+
       {/* Header */}
       <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
         <div className="max-w-4xl mx-auto px-4 py-6">
@@ -22,7 +73,7 @@ export default function SSODocsPage() {
             className="inline-flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors mb-4"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Dashboard
+            Back to Portal Directory
           </Link>
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
@@ -37,6 +88,26 @@ export default function SSODocsPage() {
               </p>
             </div>
           </div>
+
+          <div className="mt-6 rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200 dark:bg-slate-900/60 dark:ring-slate-700">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
+              On this page
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2 text-sm">
+              <a href="#how-sso-works" className="rounded-full bg-white px-3 py-2 text-slate-700 transition hover:text-slate-900 dark:bg-slate-800 dark:text-slate-300 dark:hover:text-white">
+                How SSO works
+              </a>
+              <a href="#api-endpoints" className="rounded-full bg-white px-3 py-2 text-slate-700 transition hover:text-slate-900 dark:bg-slate-800 dark:text-slate-300 dark:hover:text-white">
+                API endpoints
+              </a>
+              <a href="#integration-steps" className="rounded-full bg-white px-3 py-2 text-slate-700 transition hover:text-slate-900 dark:bg-slate-800 dark:text-slate-300 dark:hover:text-white">
+                Integration steps
+              </a>
+              <a href="#security-considerations" className="rounded-full bg-white px-3 py-2 text-slate-700 transition hover:text-slate-900 dark:bg-slate-800 dark:text-slate-300 dark:hover:text-white">
+                Security
+              </a>
+            </div>
+          </div>
         </div>
       </header>
 
@@ -45,7 +116,7 @@ export default function SSODocsPage() {
         <div className="prose dark:prose-invert max-w-none">
           
           {/* Overview */}
-          <section className="mb-12">
+          <section id="how-sso-works" className="mb-12">
             <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
               <Globe className="w-5 h-5 text-blue-600" />
               How SSO Works
@@ -80,7 +151,7 @@ export default function SSODocsPage() {
           </section>
 
           {/* API Endpoints */}
-          <section className="mb-12">
+          <section id="api-endpoints" className="mb-12">
             <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
               <Key className="w-5 h-5 text-blue-600" />
               API Endpoints
@@ -135,7 +206,7 @@ export default function SSODocsPage() {
           </section>
 
           {/* Integration Steps */}
-          <section className="mb-12">
+          <section id="integration-steps" className="mb-12">
             <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-blue-600" />
               Integration Steps
@@ -155,7 +226,7 @@ export default function SSODocsPage() {
               <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700">
                 <h3 className="font-semibold text-slate-900 dark:text-white mb-2">2. Validate the Token</h3>
                 <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
-                  Send the token to the Hub's validation endpoint:
+                  Send the token to the Hub&apos;s validation endpoint:
                 </p>
                 <pre className="text-xs bg-slate-100 dark:bg-slate-900 p-3 rounded-lg text-slate-700 dark:text-slate-300 overflow-x-auto">
 {`const response = await fetch('https://hub.pfs-portal.com/api/sso/validate', {
@@ -184,7 +255,7 @@ const data = await response.json();
           </section>
 
           {/* Security */}
-          <section className="mb-12">
+          <section id="security-considerations" className="mb-12">
             <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
               <Lock className="w-5 h-5 text-blue-600" />
               Security Considerations
@@ -201,7 +272,7 @@ const data = await response.json();
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-green-600">✓</span>
-                  <span><strong>No Token Storage:</strong> Don't store SSO tokens. Use them immediately to create local sessions.</span>
+                  <span><strong>No Token Storage:</strong> Don&apos;t store SSO tokens. Use them immediately to create local sessions.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-green-600">✓</span>
@@ -218,13 +289,13 @@ const data = await response.json();
                 Need More Details?
               </h3>
               <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                View the complete integration guide with code examples in multiple languages.
+                Jump straight to the implementation checklist and endpoint details on this page.
               </p>
               <a 
-                href="/SSO_INTEGRATION_GUIDE.md" 
+                href="#integration-steps" 
                 className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700"
               >
-                View Full Documentation
+                Review Integration Steps
                 <ArrowRight className="w-4 h-4" />
               </a>
             </div>

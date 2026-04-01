@@ -36,23 +36,24 @@ export async function proxy(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
+  const pathname = request.nextUrl.pathname
+  const isProtectedPage =
+    pathname.startsWith('/dashboard') || pathname.startsWith('/admin')
+  const isProtectedApi =
+    pathname.startsWith('/api/admin') ||
+    (pathname.startsWith('/api/sso') &&
+      !pathname.startsWith('/api/sso/validate') &&
+      !pathname.startsWith('/api/sso/users'))
 
-  // Protect dashboard and API routes (except /api/sso/validate and /api/sso/users which must be public)
-  if (
-    !user &&
-    (request.nextUrl.pathname.startsWith('/dashboard') ||
-      (request.nextUrl.pathname.startsWith('/api/sso') && 
-       !request.nextUrl.pathname.startsWith('/api/sso/validate') &&
-       !request.nextUrl.pathname.startsWith('/api/sso/users')))
-  ) {
-    // no user, redirect to home page (login modal will be triggered client-side)
+  // Protect admin, dashboard, and authenticated API routes.
+  if (!user && (isProtectedPage || isProtectedApi)) {
     const url = request.nextUrl.clone()
-    url.pathname = '/'
+    url.pathname = isProtectedPage ? '/login' : '/'
     return NextResponse.redirect(url)
   }
 
   // If user is logged in and tries to access login page, redirect to home
-  if (user && request.nextUrl.pathname.startsWith('/login')) {
+  if (user && pathname.startsWith('/login')) {
     const url = request.nextUrl.clone()
     url.pathname = '/'
     return NextResponse.redirect(url)

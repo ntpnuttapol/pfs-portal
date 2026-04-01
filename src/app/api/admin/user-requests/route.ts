@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { getErrorMessage } from '@/lib/error'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -15,7 +16,7 @@ export async function OPTIONS() {
 }
 
 // GET /api/admin/user-requests - List all pending requests
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Use service role to bypass auth/RLS
     const supabase = createClient(supabaseUrl, supabaseServiceKey, {
@@ -34,8 +35,12 @@ export async function GET(request: NextRequest) {
     
     return NextResponse.json({ requests }, { headers: corsHeaders })
     
-  } catch (error) {
-    return NextResponse.json({ error: 'Internal error' }, { status: 500, headers: corsHeaders })
+  } catch (error: unknown) {
+    console.error('Get user requests error:', error)
+    return NextResponse.json(
+      { error: 'Internal error: ' + getErrorMessage(error) },
+      { status: 500, headers: corsHeaders }
+    )
   }
 }
 
@@ -90,7 +95,11 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json({ request: data, message: 'Request submitted. Waiting for admin approval.' }, { headers: corsHeaders })
     
-  } catch (error) {
-    return NextResponse.json({ error: 'Internal error' }, { status: 500, headers: corsHeaders })
+  } catch (error: unknown) {
+    console.error('Create user request error:', error)
+    return NextResponse.json(
+      { error: 'Internal error: ' + getErrorMessage(error) },
+      { status: 500, headers: corsHeaders }
+    )
   }
 }

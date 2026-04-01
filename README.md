@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## PFS Portal
 
-## Getting Started
+PFS Portal is a Next.js internal portal directory and SSO hub for Polyfoam Suvarnabhumi. It provides:
 
-First, run the development server:
+- a public-facing portal directory
+- sign-in and access request flows
+- admin approval and user management
+- SSO documentation for connected systems
+
+## Local Development
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Quality Checks
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run lint
+npx tsc --noEmit --incremental false
+npm run build
+```
 
-## Learn More
+## Environment Variables
 
-To learn more about Next.js, take a look at the following resources:
+Use [env.template](/Users/mynutntp/Desktop/PFS-Portal/env.template) as the reference for local and production environment variables.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+For production SEO and correct canonical URLs, set:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+NEXT_PUBLIC_APP_URL=https://polyfoampfs-hub.vercel.app
+```
 
-## Deploy on Vercel
+## Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The project is deployed on Vercel. Use the release checklist in [DEPLOYMENT.md](/Users/mynutntp/Desktop/PFS-Portal/DEPLOYMENT.md) after each production deploy.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Key live checks:
+
+- `/robots.txt`
+- `/sitemap.xml`
+- `/opengraph-image`
+- `/twitter-image`
+- `/sso-docs`
+
+## Tech Stack
+
+- Next.js App Router
+- TypeScript
+- Supabase
+- Vercel
+
+## Notes
+
+- public SEO pages are `/` and `/sso-docs`
+- private routes such as `/login`, `/dashboard`, and `/admin/*` are configured as `noindex`
+- metadata, sitemap, robots, and social image routes are generated through the App Router

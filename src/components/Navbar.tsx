@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
-import { User, LayoutDashboard, Settings, Users, UserCog, Menu, X, ChevronDown, LogOut, LogIn } from 'lucide-react'
+import { User, Settings, Users, UserCog, Menu, X, ChevronDown, LogOut, LogIn } from 'lucide-react'
 import LoginModal from './LoginModal'
 
 const adminLinks = [

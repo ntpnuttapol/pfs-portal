@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient as createServerClient } from '@/utils/supabase/server'
 import { createClient } from '@supabase/supabase-js'
+import { getErrorMessage } from '@/lib/error'
 
 // Use service role key for admin operations
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -97,11 +97,13 @@ export async function POST(request: NextRequest) {
       { headers: corsHeaders }
     )
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Signup request error:', error)
-    console.error('Error stack:', error?.stack)
+    if (error instanceof Error && error.stack) {
+      console.error('Error stack:', error.stack)
+    }
     return NextResponse.json(
-      { error: 'Internal server error: ' + (error?.message || 'Unknown error') },
+      { error: 'Internal server error: ' + getErrorMessage(error) },
       { status: 500, headers: corsHeaders }
     )
   }

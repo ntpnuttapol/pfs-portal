@@ -1,26 +1,18 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { ExternalLink, Server, Globe, BarChart3, AppWindow, Users, Settings, LineChart, Car, Fuel, Lock, Loader2, ArrowUpRight } from 'lucide-react';
+import { Server, Globe, BarChart3, AppWindow, Users, Settings, LineChart, Car, Fuel, Lock, Loader2, ArrowUpRight } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import type { PortalDefinition } from '@/data/portals';
 
-export interface Portal {
-  id: string | number;
-  title: string;
-  description: string;
-  url: string;
-  category?: string;
-  icon?: string;
-  status?: 'active' | 'maintenance' | 'offline';
-  requiresSso?: boolean;
-  ssoSystemId?: string;
-  ssoTargetUrl?: string;
-}
-
-export default function PortalCard({ portal, index }: { portal: Portal; index: number }) {
-  const router = useRouter();
+export default function PortalCard({
+  portal,
+  index,
+}: {
+  portal: PortalDefinition
+  index: number
+}) {
   const { user, setIsLoginModalOpen } = useAuth();
   const [currentStatus, setCurrentStatus] = useState<'active' | 'maintenance' | 'offline' | 'loading'>(
     portal.status === 'maintenance' ? 'maintenance' : portal.status === 'offline' ? 'offline' : 'loading'
@@ -69,6 +61,8 @@ export default function PortalCard({ portal, index }: { portal: Portal; index: n
   const requiresLogin = isInternalSystem && !user;
   const isMaintenance = currentStatus === 'maintenance';
   const isExternalLink = portal.category === 'external' || !isInternalSystem;
+  const fallbackHref = portal.ssoTargetUrl || portal.url;
+  const linkHref = hasSso ? fallbackHref : portal.url;
 
   // Status dot color
   const statusDotColor = currentStatus === 'active'
@@ -96,23 +90,24 @@ export default function PortalCard({ portal, index }: { portal: Portal; index: n
         ? { label: 'SSO', className: 'text-emerald-600 bg-emerald-500/8' }
         : { label: 'Direct', className: 'text-blue-600 bg-blue-500/8' };
 
-  const handleClick = async (e: React.MouseEvent) => {
-    e.preventDefault();
+  const handleClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     setSsoError(false);
 
-    if (isMaintenance) return;
-
-    if (isExternalLink) {
-      window.open(portal.url, '_blank');
+    if (isMaintenance) {
+      e.preventDefault();
       return;
     }
 
     if (!user) {
-      setIsLoginModalOpen(true);
+      if (!isExternalLink) {
+        e.preventDefault();
+        setIsLoginModalOpen(true);
+      }
       return;
     }
 
     if (hasSso) {
+      e.preventDefault();
       setSsoLoading(true);
       try {
         const response = await fetch('/api/sso/token', {
@@ -126,7 +121,7 @@ export default function PortalCard({ portal, index }: { portal: Portal; index: n
         });
         const data = await response.json();
         if (!response.ok) throw new Error(data.error);
-        window.location.href = data.redirectUrl;
+        window.location.assign(data.redirectUrl);
       } catch (error) {
         console.error('SSO error:', error);
         setSsoError(true);
@@ -134,19 +129,21 @@ export default function PortalCard({ portal, index }: { portal: Portal; index: n
       }
       return;
     }
-
-    window.open(portal.url, '_blank');
   };
 
   return (
-    <motion.button
+    <motion.a
+      href={linkHref}
       onClick={handleClick}
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.4, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
       whileHover={ssoLoading || isMaintenance ? undefined : { y: -4 }}
-      disabled={ssoLoading || isMaintenance}
+      aria-disabled={ssoLoading || isMaintenance}
+      aria-label={`Open ${portal.title}`}
+      rel={isExternalLink ? 'noopener noreferrer' : undefined}
+      target={isExternalLink ? '_blank' : undefined}
       className="group block w-full text-left"
     >
       <div className={`relative bg-card border rounded-[24px] p-5 h-full transition-all duration-300 ${
@@ -212,6 +209,6 @@ export default function PortalCard({ portal, index }: { portal: Portal; index: n
           </div>
         )}
       </div>
-    </motion.button>
+    </motion.a>
   );
 }

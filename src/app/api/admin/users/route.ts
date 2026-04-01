@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { getErrorMessage } from '@/lib/error'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -15,7 +16,7 @@ export async function OPTIONS() {
 }
 
 // GET /api/admin/users - List all users with their system roles
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     console.log('SUPABASE_SERVICE_ROLE_KEY exists:', !!supabaseServiceKey)
     console.log('SUPABASE_URL:', supabaseUrl?.substring(0, 20))
@@ -66,8 +67,11 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ users: usersWithRoles }, { headers: corsHeaders })
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Get users error:', error)
-    return NextResponse.json({ error: 'Internal error: ' + error?.message }, { status: 500, headers: corsHeaders })
+    return NextResponse.json(
+      { error: 'Internal error: ' + getErrorMessage(error) },
+      { status: 500, headers: corsHeaders }
+    )
   }
 }

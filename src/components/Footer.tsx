@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowUpRight, FileText, LayoutDashboard, LogIn, Shield } from 'lucide-react';
+import { ArrowUpRight, FileText, LogIn, Shield } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function Footer() {
