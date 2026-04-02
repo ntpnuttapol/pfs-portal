@@ -1,7 +1,7 @@
 export const siteName = 'PFS Portal'
 export const siteTitle = 'PFS Portal Directory'
 export const siteDescription =
-  'A centralized hub for internal systems, public resources, and SSO-enabled workflows across Polyfoam Suvarnabhumi.'
+  'ศูนย์รวมสำหรับเข้าถึงระบบภายใน ลิงก์สาธารณะ และงานที่รองรับ SSO ของ Polyfoam Suvarnabhumi'
 
 function normalizeUrl(value: string | undefined) {
   if (!value) return ''

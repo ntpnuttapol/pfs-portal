@@ -23,7 +23,7 @@ const homeStructuredData = {
     },
     {
       '@type': 'CollectionPage',
-      name: 'PFS Portal Directory',
+      name: 'ศูนย์รวมระบบภายใน',
       url: siteOrigin,
       description: siteDescription,
       isPartOf: {
@@ -37,26 +37,26 @@ const homeStructuredData = {
       mainEntity: [
         {
           '@type': 'Question',
-          name: 'What is PFS Portal used for?',
+          name: 'หน้านี้ใช้ทำอะไร?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'PFS Portal is a centralized directory for internal systems, public resources, and SSO-enabled launch flows used across Polyfoam Suvarnabhumi.',
+            text: 'หน้านี้เป็นศูนย์รวมสำหรับค้นหาและเปิดใช้งานระบบภายใน ลิงก์สาธารณะ และระบบที่รองรับการเข้าใช้งานผ่าน SSO',
           },
         },
         {
           '@type': 'Question',
-          name: 'Can users request access from the portal?',
+          name: 'ผู้ใช้สามารถขอสิทธิ์ผ่านหน้านี้ได้หรือไม่?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Yes. New users can submit an access request for approval before they get access to protected systems and workflows.',
+            text: 'ได้ ผู้ใช้ใหม่สามารถส่งคำขอเพื่อรออนุมัติก่อนเข้าใช้งานระบบที่มีการจำกัดสิทธิ์',
           },
         },
         {
           '@type': 'Question',
-          name: 'Where can developers read about the SSO flow?',
+          name: 'นักพัฒนาสามารถอ่านเอกสาร SSO ได้ที่ไหน?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Developers can review the public SSO documentation page for token validation, user mapping, and integration steps.',
+            text: 'นักพัฒนาสามารถเปิดดูหน้าเอกสาร SSO เพื่ออ่านวิธีตรวจสอบ token การ map ผู้ใช้ และขั้นตอนเชื่อมต่อระบบ',
           },
         },
       ],
@@ -65,31 +65,31 @@ const homeStructuredData = {
 }
 
 export const metadata: Metadata = {
-  title: 'Internal Portal Directory & SSO Hub',
+  title: 'ศูนย์รวมระบบภายใน',
   description:
-    'Browse Polyfoam Suvarnabhumi systems, request access, and launch SSO-enabled tools from the PFS Portal directory.',
+    'รวมระบบของ Polyfoam Suvarnabhumi ไว้ในที่เดียว พร้อมการขอสิทธิ์และการเข้าใช้งานผ่าน SSO',
   alternates: {
     canonical: '/',
   },
   openGraph: {
-    title: `Internal Portal Directory & SSO Hub | ${siteName}`,
+    title: `ศูนย์รวมระบบภายใน | ${siteName}`,
     description:
-      'Browse Polyfoam Suvarnabhumi systems, request access, and launch SSO-enabled tools from one portal.',
+      'รวมระบบของ Polyfoam Suvarnabhumi ไว้ในที่เดียว พร้อมการขอสิทธิ์และการเข้าใช้งานผ่าน SSO',
     url: '/',
     images: [
       {
         url: '/opengraph-image.png',
         width: 1200,
         height: 630,
-        alt: 'PFS Portal internal directory and SSO hub',
+        alt: 'ศูนย์รวมระบบภายในและการเข้าใช้งานผ่าน SSO',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: `Internal Portal Directory & SSO Hub | ${siteName}`,
+    title: `ศูนย์รวมระบบภายใน | ${siteName}`,
     description:
-      'Browse Polyfoam Suvarnabhumi systems, request access, and launch SSO-enabled tools from one portal.',
+      'รวมระบบของ Polyfoam Suvarnabhumi ไว้ในที่เดียว พร้อมการขอสิทธิ์และการเข้าใช้งานผ่าน SSO',
     images: ['/twitter-image.png'],
   },
 }

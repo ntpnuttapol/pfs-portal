@@ -48,7 +48,7 @@ export async function proxy(request: NextRequest) {
   // Protect admin, dashboard, and authenticated API routes.
   if (!user && (isProtectedPage || isProtectedApi)) {
     const url = request.nextUrl.clone()
-    url.pathname = isProtectedPage ? '/login' : '/'
+    url.pathname = '/'
     return NextResponse.redirect(url)
   }
 

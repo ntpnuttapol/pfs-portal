@@ -13,10 +13,12 @@ import {
 
 type PortalGridProps = {
   sectionClassName?: string;
+  language?: 'en' | 'th';
 };
 
 export default function PortalGrid({
   sectionClassName = 'pb-16 px-6 bg-background',
+  language = 'en',
 }: PortalGridProps) {
   const [portals, setPortals] = useState<PortalDefinition[]>(() =>
     mergePortalData(DEFAULT_PORTALS)
@@ -45,8 +47,55 @@ export default function PortalGrid({
 
   const hasFilters = searchTerm.trim().length > 0 || categoryFilter !== 'all';
 
-  const formatLabel = (value: string) =>
-    value.replace(/-/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
+  const copy = language === 'th'
+    ? {
+        eyebrow: 'รายการระบบ',
+        title: 'เลือกระบบ แดชบอร์ด และเครื่องมือที่เชื่อมต่อ',
+        description:
+          'เลือกระบบงานที่ต้องการจากหน้าเดียว แล้วเปิดใช้งานต่อได้ทั้งแบบเข้าใช้งานตรงหรือเชื่อมต่อผ่าน SSO',
+        searchLabel: 'ค้นหาระบบ',
+        searchPlaceholder: 'ค้นหาระบบ...',
+        filterLabel: 'กรองหมวดหมู่ระบบ',
+        all: 'ทั้งหมด',
+        clear: 'ล้างตัวกรอง',
+        totalPrefix: 'จาก',
+        totalSuffix: 'ระบบ',
+        emptyTitle: 'ไม่พบระบบที่ค้นหา',
+        emptyBody: 'ลองเปลี่ยนคำค้นหาหรือล้างตัวกรองเพื่อแสดงรายการทั้งหมด',
+      }
+    : {
+        eyebrow: 'Portal Directory',
+        title: 'Browse systems, dashboards, and connected tools',
+        description:
+          'Choose the business system you need from one directory, then continue with direct access or SSO handoff.',
+        searchLabel: 'Search portals',
+        searchPlaceholder: 'Search portals...',
+        filterLabel: 'Filter portal category',
+        all: 'All',
+        clear: 'Clear',
+        totalPrefix: 'of',
+        totalSuffix: 'portals',
+        emptyTitle: 'No portals found',
+        emptyBody: 'Try a different search term or clear the filter to see all portals.',
+      }
+
+  const formatLabel = (value: string) => {
+    const labels: Record<string, string> = language === 'th'
+      ? {
+          all: 'ทั้งหมด',
+          system: 'ระบบงาน',
+          analytics: 'แดชบอร์ด',
+          external: 'ลิงก์ภายนอก',
+        }
+      : {
+          all: 'All',
+          system: 'System',
+          analytics: 'Analytics',
+          external: 'External',
+        };
+
+    return labels[value] || value.replace(/-/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
+  }
 
   useEffect(() => {
     async function fetchPortals() {
@@ -78,30 +127,27 @@ export default function PortalGrid({
       <div className="max-w-7xl mx-auto">
         <div className="mb-8 max-w-3xl">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/45">
-            Portal Directory
+            {copy.eyebrow}
           </p>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-            Browse systems, dashboards, and connected tools
+            {copy.title}
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-foreground/60 md:text-base">
-            Explore the public directory of business systems available through the
-            PFS Portal hub, then launch the tools you need with direct access or
-            SSO-enabled handoff.
+            {copy.description}
           </p>
         </div>
 
         {/* Minimal toolbar */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
         >
           <div className="flex items-center gap-3">
             <div className="relative flex-1 sm:flex-initial">
               <label htmlFor="portal-search" className="sr-only">
-                Search portals
+                {copy.searchLabel}
               </label>
               <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground/35" />
               <input
@@ -109,14 +155,14 @@ export default function PortalGrid({
                 type="text"
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
-                placeholder="Search portals..."
+                placeholder={copy.searchPlaceholder}
                 className="w-full sm:w-72 rounded-2xl border border-card-border bg-card py-2.5 pl-10 pr-4 text-sm text-foreground outline-none transition focus:border-foreground/15 focus:ring-2 focus:ring-foreground/5 placeholder:text-foreground/35"
               />
             </div>
 
             <div className="relative">
               <label htmlFor="portal-category" className="sr-only">
-                Filter portal category
+                {copy.filterLabel}
               </label>
               <Filter className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-foreground/35" />
               <select
@@ -125,7 +171,7 @@ export default function PortalGrid({
                 onChange={(event) => setCategoryFilter(event.target.value)}
                 className="appearance-none rounded-2xl border border-card-border bg-card pl-9 pr-8 py-2.5 text-sm text-foreground outline-none transition focus:border-foreground/15 focus:ring-2 focus:ring-foreground/5 cursor-pointer"
               >
-                <option value="all">All</option>
+                <option value="all">{copy.all}</option>
                 {categories
                   .filter((category) => category !== 'all')
                   .map((category) => (
@@ -146,16 +192,16 @@ export default function PortalGrid({
                 className="flex items-center gap-1.5 rounded-2xl border border-card-border bg-card px-3 py-2.5 text-xs font-medium text-foreground/60 transition hover:bg-foreground/5 hover:text-foreground"
               >
                 <XIcon className="h-3.5 w-3.5" />
-                Clear
+                {copy.clear}
               </button>
             )}
           </div>
 
           <div className="flex items-center gap-2 text-xs font-medium text-foreground/40">
             <span className="tabular-nums">{filteredPortals.length}</span>
-            <span>of</span>
+            <span>{copy.totalPrefix}</span>
             <span className="tabular-nums">{portals.length}</span>
-            <span>portals</span>
+            <span>{copy.totalSuffix}</span>
           </div>
         </motion.div>
 
@@ -164,9 +210,9 @@ export default function PortalGrid({
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-foreground/5">
               <Search className="h-6 w-6 text-foreground/30" />
             </div>
-            <h3 className="text-lg font-semibold tracking-tight">No portals found</h3>
+            <h3 className="text-lg font-semibold tracking-tight">{copy.emptyTitle}</h3>
             <p className="mt-2 text-sm text-foreground/50 max-w-sm mx-auto">
-              Try a different search term or clear the filter to see all portals.
+              {copy.emptyBody}
             </p>
           </div>
         ) : (

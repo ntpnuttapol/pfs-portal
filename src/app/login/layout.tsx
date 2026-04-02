@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Sign In',
-  description: 'Sign in to the PFS Portal hub or request access to internal systems and SSO-enabled tools.',
+  title: 'เข้าสู่ระบบ',
+  description: 'เข้าสู่ระบบหรือขอสิทธิ์เพื่อใช้งานระบบภายในและเครื่องมือที่รองรับ SSO',
   robots: {
     index: false,
     follow: false,

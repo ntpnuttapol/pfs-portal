@@ -72,7 +72,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
     if (isSignUp) {
       if (password !== confirmPassword) {
-        setError('Passwords do not match')
+        setError('รหัสผ่านไม่ตรงกัน')
         setIsLoading(false)
         return
       }
@@ -80,18 +80,18 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       try {
         const { error, pendingApproval, message } = await signUp(username, email, password, fullName)
         if (error) {
-          setError(error.message || 'Failed to create account')
+          setError(error.message || 'ไม่สามารถสร้างบัญชีได้')
         } else if (pendingApproval) {
-          setSuccessMessage(message || 'Your registration request has been submitted and is pending admin approval.')
+          setSuccessMessage(message || 'ส่งคำขอสมัครใช้งานเรียบร้อยแล้ว กรุณารอผู้ดูแลอนุมัติ')
           setIsSignUp(false)
           resetForm()
         } else {
-          setSuccessMessage('Account created successfully! Please sign in.')
+          setSuccessMessage('สร้างบัญชีเรียบร้อยแล้ว กรุณาเข้าสู่ระบบ')
           setIsSignUp(false)
           resetForm()
         }
       } catch {
-        setError('An unexpected error occurred')
+        setError('เกิดข้อผิดพลาดที่ไม่คาดคิด')
       } finally {
         setIsLoading(false)
       }
@@ -99,14 +99,14 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       try {
         const { error } = await signIn(username, password)
         if (error) {
-          setError('Invalid username or password')
+          setError('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง')
         } else {
           resetForm()
           onClose()
           router.refresh()
         }
       } catch {
-        setError('An unexpected error occurred')
+        setError('เกิดข้อผิดพลาดที่ไม่คาดคิด')
       } finally {
         setIsLoading(false)
       }
@@ -145,7 +145,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 <div className="flex items-center justify-between mb-6">
                   <div className="inline-flex items-center gap-2 rounded-full border border-card-border bg-background px-4 py-2 text-xs font-medium text-foreground/70 shadow-sm">
                     <Lock className="h-3.5 w-3.5" />
-                    Secure hub access
+                    เข้าใช้งานอย่างปลอดภัย
                   </div>
                   <button
                     onClick={onClose}
@@ -157,12 +157,12 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
                 <div className="mb-6">
                   <h2 className="text-3xl font-bold tracking-tight text-foreground">
-                    {isSignUp ? 'Request access' : 'Welcome back'}
+                    {isSignUp ? 'ขอสิทธิ์ใช้งาน' : 'ยินดีต้อนรับกลับ'}
                   </h2>
                   <p className="mt-2 text-sm leading-relaxed text-foreground/60">
                     {isSignUp 
-                      ? 'Submit your details and wait for admin approval before signing in.' 
-                      : 'Use your hub credentials to continue to your dashboard.'}
+                      ? 'กรอกข้อมูลของคุณและรอผู้ดูแลอนุมัติก่อนเข้าสู่ระบบ' 
+                      : 'ใช้บัญชีของคุณเพื่อเข้าสู่ระบบและไปยังแดชบอร์ด'}
                   </p>
                 </div>
 
@@ -172,14 +172,14 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                     onClick={() => handleModeChange(false)}
                     className={`flex-1 sm:flex-none rounded-full px-4 py-2 text-sm font-medium transition-colors ${!isSignUp ? 'bg-foreground text-background shadow-sm' : 'text-foreground/60 hover:text-foreground'}`}
                   >
-                    Sign In
+                    เข้าสู่ระบบ
                   </button>
                   <button
                     type="button"
                     onClick={() => handleModeChange(true)}
                     className={`flex-1 sm:flex-none rounded-full px-4 py-2 text-sm font-medium transition-colors ${isSignUp ? 'bg-foreground text-background shadow-sm' : 'text-foreground/60 hover:text-foreground'}`}
                   >
-                    Request Access
+                    ขอสิทธิ์ใช้งาน
                   </button>
                 </div>
 
@@ -213,7 +213,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <label className="mb-2 block text-xs font-medium text-foreground/70 uppercase tracking-wider">
-                            Full Name
+                            ชื่อ - นามสกุล
                           </label>
                           <div className="relative">
                             <User className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-foreground/35" />
@@ -223,14 +223,14 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                               onChange={(e) => setFullName(e.target.value)}
                               required
                               className={inputClassName}
-                              placeholder="Full name"
+                              placeholder="ชื่อ - นามสกุล"
                             />
                           </div>
                         </div>
 
                         <div>
                           <label className="mb-2 block text-xs font-medium text-foreground/70 uppercase tracking-wider">
-                            Email
+                            อีเมล
                           </label>
                           <div className="relative">
                             <Mail className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-foreground/35" />
@@ -240,7 +240,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                               onChange={(e) => setEmail(e.target.value)}
                               required
                               className={inputClassName}
-                              placeholder="Email address"
+                              placeholder="อีเมล"
                             />
                           </div>
                         </div>
@@ -250,7 +250,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
                   <div>
                     <label className="mb-2 block text-xs font-medium text-foreground/70 uppercase tracking-wider">
-                      Username
+                      ชื่อผู้ใช้
                     </label>
                     <div className="relative">
                       <UserCircle className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-foreground/35" />
@@ -260,14 +260,14 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         onChange={(e) => setUsername(e.target.value)}
                         required
                         className={inputClassName}
-                        placeholder={isSignUp ? "Choose a username" : "Enter your username"}
+                        placeholder={isSignUp ? "ตั้งชื่อผู้ใช้" : "กรอกชื่อผู้ใช้"}
                       />
                     </div>
                   </div>
 
                   <div>
                     <label className="mb-2 block text-xs font-medium text-foreground/70 uppercase tracking-wider">
-                      Password
+                      รหัสผ่าน
                     </label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-foreground/35" />
@@ -278,7 +278,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         required
                         minLength={6}
                         className={passwordInputClassName}
-                        placeholder="Enter password"
+                        placeholder="กรอกรหัสผ่าน"
                       />
                       <button
                         type="button"
@@ -293,7 +293,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                   {isSignUp && (
                     <div>
                       <label className="mb-2 block text-xs font-medium text-foreground/70 uppercase tracking-wider">
-                        Confirm Password
+                        ยืนยันรหัสผ่าน
                       </label>
                       <div className="relative">
                         <Lock className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-foreground/35" />
@@ -304,7 +304,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                           required
                           minLength={6}
                           className={passwordInputClassName}
-                          placeholder="Confirm password"
+                          placeholder="กรอกรหัสผ่านอีกครั้ง"
                         />
                       </div>
                     </div>
@@ -319,7 +319,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                       <Loader2 className="h-5 w-5 animate-spin" />
                     ) : (
                       <>
-                        {isSignUp ? 'Submit access request' : 'Sign in to dashboard'}
+                        {isSignUp ? 'ส่งคำขอใช้งาน' : 'เข้าสู่ระบบ'}
                         <ArrowRight className="h-5 w-5" />
                       </>
                     )}
@@ -333,8 +333,8 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         <Shield className="h-4 w-4" />
                       </div>
                       <div className="min-w-0">
-                        <h3 className="text-xs font-semibold text-foreground truncate">SSO-ready</h3>
-                        <p className="text-[10px] text-foreground/50 leading-tight mt-0.5">Unified login session</p>
+                        <h3 className="text-xs font-semibold text-foreground truncate">พร้อมใช้งาน SSO</h3>
+                        <p className="text-[10px] text-foreground/50 leading-tight mt-0.5">เข้าสู่ระบบครั้งเดียว</p>
                       </div>
                     </div>
 
@@ -343,8 +343,8 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                         <Sparkles className="h-4 w-4" />
                       </div>
                       <div className="min-w-0">
-                        <h3 className="text-xs font-semibold text-foreground truncate">Admin approved</h3>
-                        <p className="text-[10px] text-foreground/50 leading-tight mt-0.5">Secure access control</p>
+                        <h3 className="text-xs font-semibold text-foreground truncate">อนุมัติโดยผู้ดูแล</h3>
+                        <p className="text-[10px] text-foreground/50 leading-tight mt-0.5">ควบคุมสิทธิ์อย่างปลอดภัย</p>
                       </div>
                     </div>
                   </div>

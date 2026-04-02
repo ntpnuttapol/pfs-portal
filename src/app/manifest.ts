@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: 'PFS Portal',
     short_name: 'PFS Portal',
     description:
-      'A centralized hub for internal systems, public resources, and SSO-enabled workflows across Polyfoam Suvarnabhumi.',
+      'ศูนย์รวมสำหรับเข้าถึงระบบภายใน ลิงก์สาธารณะ และงานที่รองรับ SSO ของ Polyfoam Suvarnabhumi',
     start_url: '/',
     display: 'standalone',
     background_color: '#ffffff',

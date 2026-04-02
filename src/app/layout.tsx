@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Noto_Sans_Thai } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -10,6 +11,13 @@ import {
   siteTitle,
   siteUrl,
 } from "@/lib/site";
+
+const notoSansThai = Noto_Sans_Thai({
+  subsets: ["thai", "latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-thai",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: siteUrl,
@@ -46,7 +54,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth antialiased">
+    <html lang="en" className={`scroll-smooth antialiased ${notoSansThai.variable}`}>
       <body className="min-h-screen flex flex-col bg-background text-foreground">
         <a href="#main-content" className="skip-link">
           Skip to content

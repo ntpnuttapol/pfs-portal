@@ -11,10 +11,17 @@ export interface PortalDefinition {
   ssoTargetUrl?: string
 }
 
+function normalizePortalTitle(title: string) {
+  if (title === 'Hr-employee') return 'Hr-System'
+  if (title === 'Project-Finishing') return 'DX Project'
+  if (title === 'Fleet Booking') return 'Car Booking'
+  return title
+}
+
 export const DEFAULT_PORTALS: PortalDefinition[] = [
   {
     id: 1,
-    title: 'Hr-employee',
+    title: 'Hr-System',
     description: 'Human Resources and Employee Health management system.',
     url: 'https://pfs-system.vercel.app/login',
     category: 'system',
@@ -36,7 +43,7 @@ export const DEFAULT_PORTALS: PortalDefinition[] = [
   },
   {
     id: 3,
-    title: 'Project-Finishing',
+    title: 'DX Project',
     description: 'Production monitoring and project finishing dashboard.',
     url: 'https://production-dashboard-pink.vercel.app/login',
     category: 'analytics',
@@ -47,7 +54,7 @@ export const DEFAULT_PORTALS: PortalDefinition[] = [
   },
   {
     id: 4,
-    title: 'Fleet Booking',
+    title: 'Car Booking',
     description: 'Vehicle and fleet reservation management.',
     url: 'https://polyfoampfs-bookingcar.vercel.app/',
     category: 'system',
@@ -78,6 +85,10 @@ export const SSO_CONFIG: Record<
   string,
   { ssoSystemId: string; ssoTargetUrl: string }
 > = {
+  'Hr-System': {
+    ssoSystemId: 'hr-employee',
+    ssoTargetUrl: 'https://pfs-system.vercel.app/login',
+  },
   'Hr-employee': {
     ssoSystemId: 'hr-employee',
     ssoTargetUrl: 'https://pfs-system.vercel.app/login',
@@ -85,6 +96,10 @@ export const SSO_CONFIG: Record<
   Moldshop: {
     ssoSystemId: 'moldshop',
     ssoTargetUrl: 'https://moldshop.vercel.app/login',
+  },
+  'DX Project': {
+    ssoSystemId: 'project-finishing',
+    ssoTargetUrl: 'https://production-dashboard-pink.vercel.app/login',
   },
   'Project-Finishing': {
     ssoSystemId: 'project-finishing',
@@ -95,7 +110,8 @@ export const SSO_CONFIG: Record<
 export function mergePortalData(portals: PortalDefinition[]) {
   const merged = portals.map((portal) => ({
     ...portal,
-    ...(SSO_CONFIG[portal.title] || {}),
+    title: normalizePortalTitle(portal.title),
+    ...(SSO_CONFIG[normalizePortalTitle(portal.title)] || SSO_CONFIG[portal.title] || {}),
   }))
 
   const existingTitles = new Set(merged.map((portal) => portal.title))

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
@@ -9,10 +9,12 @@ import { User, Settings, Users, UserCog, Menu, X, ChevronDown, LogOut, LogIn } f
 import LoginModal from './LoginModal'
 
 const adminLinks = [
-  { href: '/admin/user-approval', label: 'User Approval', icon: Users },
-  { href: '/admin/user-management', label: 'User Management', icon: UserCog },
-  { href: '/admin/sso-link', label: 'SSO Link', icon: Settings },
+  { href: '/admin/user-approval', label: 'อนุมัติผู้ใช้', icon: Users },
+  { href: '/admin/user-management', label: 'จัดการผู้ใช้', icon: UserCog },
+  { href: '/admin/sso-link', label: 'เชื่อมบัญชี SSO', icon: Settings },
 ]
+
+const USER_APPROVAL_PATH = '/admin/user-approval'
 
 export default function Navbar() {
   const pathname = usePathname()
@@ -20,9 +22,36 @@ export default function Navbar() {
   const { user, isLoading, isAdmin, signOut, isLoginModalOpen, setIsLoginModalOpen } = useAuth()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false)
+  const [pendingApprovalCount, setPendingApprovalCount] = useState(0)
 
   const linkClassName = (active: boolean) =>
     `rounded-full px-3 py-2 transition-colors ${active ? 'bg-foreground text-background' : 'text-foreground/70 hover:bg-foreground/5 hover:text-foreground'}`
+
+  const pendingApprovalLabel = pendingApprovalCount > 99 ? '99+' : `${pendingApprovalCount}`
+
+  const fetchPendingApprovalCount = useCallback(async () => {
+    if (!user || !isAdmin) {
+      setPendingApprovalCount(0)
+      return
+    }
+
+    try {
+      const response = await fetch('/api/admin/user-requests', { cache: 'no-store' })
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch approval requests')
+      }
+
+      const nextCount = Array.isArray(data.requests)
+        ? data.requests.filter((request: { status?: string }) => request.status === 'pending').length
+        : 0
+
+      setPendingApprovalCount(nextCount)
+    } catch (error) {
+      console.error('Failed to fetch pending approvals:', error)
+    }
+  }, [isAdmin, user])
 
   const handleSignOut = async () => {
     setIsAdminMenuOpen(false)
@@ -30,6 +59,31 @@ export default function Navbar() {
     await signOut()
     router.push('/')
   }
+
+  useEffect(() => {
+    void fetchPendingApprovalCount()
+  }, [fetchPendingApprovalCount])
+
+  useEffect(() => {
+    if (!user || !isAdmin) {
+      return
+    }
+
+    const intervalId = window.setInterval(() => {
+      void fetchPendingApprovalCount()
+    }, 30000)
+
+    const handleWindowFocus = () => {
+      void fetchPendingApprovalCount()
+    }
+
+    window.addEventListener('focus', handleWindowFocus)
+
+    return () => {
+      window.clearInterval(intervalId)
+      window.removeEventListener('focus', handleWindowFocus)
+    }
+  }, [fetchPendingApprovalCount, isAdmin, user])
 
   return (
     <>
@@ -58,10 +112,10 @@ export default function Navbar() {
 
         <div className="hidden md:flex items-center gap-2 text-sm font-medium">
           <Link href="/#portals" className={linkClassName(pathname === '/')}>
-            Portals
+            ระบบ
           </Link>
           <Link href="/#about" className={linkClassName(false)}>
-            About
+            วิธีใช้งาน
           </Link>
         </div>
 
@@ -84,7 +138,12 @@ export default function Navbar() {
                     className={`flex items-center gap-2 rounded-full border px-4 py-2 transition-colors ${pathname.startsWith('/admin') || isAdminMenuOpen ? 'border-foreground/10 bg-foreground text-background' : 'border-card-border bg-card text-foreground hover:bg-background'}`}
                   >
                     <Settings className="h-4 w-4" />
-                    Admin
+                    ผู้ดูแล
+                    {pendingApprovalCount > 0 && (
+                      <span className="inline-flex min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 py-0.5 text-[11px] font-semibold leading-none text-white">
+                        {pendingApprovalLabel}
+                      </span>
+                    )}
                     <ChevronDown className={`h-4 w-4 transition-transform ${isAdminMenuOpen ? 'rotate-180' : ''}`} />
                   </button>
 
@@ -96,10 +155,17 @@ export default function Navbar() {
                           href={href}
                           onClick={() => setIsAdminMenuOpen(false)}
                           role="menuitem"
-                          className={`flex items-center gap-3 rounded-2xl px-4 py-3 transition-colors ${pathname === href ? 'bg-foreground text-background' : 'text-foreground/75 hover:bg-background hover:text-foreground'}`}
+                          className={`flex items-center justify-between gap-3 rounded-2xl px-4 py-3 transition-colors ${pathname === href ? 'bg-foreground text-background' : 'text-foreground/75 hover:bg-background hover:text-foreground'}`}
                         >
-                          <Icon className="h-4 w-4" />
-                          <span>{label}</span>
+                          <span className="flex items-center gap-3">
+                            <Icon className="h-4 w-4" />
+                            <span>{label}</span>
+                          </span>
+                          {href === USER_APPROVAL_PATH && pendingApprovalCount > 0 && (
+                            <span className={`inline-flex min-w-5 items-center justify-center rounded-full px-1.5 py-0.5 text-[11px] font-semibold leading-none ${pathname === href ? 'bg-white/20 text-white' : 'bg-red-500 text-white'}`}>
+                              {pendingApprovalLabel}
+                            </span>
+                          )}
                         </Link>
                       ))}
                     </div>
@@ -118,7 +184,7 @@ export default function Navbar() {
                 className="flex items-center gap-2 rounded-full border border-card-border px-4 py-2 text-foreground/70 transition-colors hover:bg-foreground hover:text-background"
               >
                 <LogOut className="h-4 w-4" />
-                Sign Out
+                ออกจากระบบ
               </button>
             </>
           ) : (
@@ -127,7 +193,7 @@ export default function Navbar() {
               className="bg-foreground text-background px-4 py-2 rounded-full hover:opacity-90 transition-opacity flex items-center gap-2 text-sm font-semibold"
             >
               <LogIn className="h-4 w-4" />
-              Sign In
+              เข้าสู่ระบบ
             </button>
           )}
         </div>
@@ -138,7 +204,7 @@ export default function Navbar() {
           aria-controls="mobile-navigation"
           aria-expanded={isMobileMenuOpen}
           className="flex items-center justify-center rounded-full border border-card-border bg-card p-2.5 text-foreground md:hidden"
-          aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+          aria-label={isMobileMenuOpen ? 'ปิดเมนู' : 'เปิดเมนู'}
         >
           {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
@@ -152,21 +218,21 @@ export default function Navbar() {
               onClick={() => setIsMobileMenuOpen(false)}
               className={`rounded-2xl px-4 py-3 transition-colors ${pathname === '/' ? 'bg-foreground text-background' : 'text-foreground/75 hover:bg-background hover:text-foreground'}`}
             >
-              Portals
+              ระบบ
             </Link>
             <Link
               href="/#about"
               onClick={() => setIsMobileMenuOpen(false)}
               className="rounded-2xl px-4 py-3 text-foreground/75 transition-colors hover:bg-background hover:text-foreground"
             >
-              About
+              วิธีใช้งาน
             </Link>
 
 
             {user && isAdmin && (
               <div className="mt-2 border-t border-card-border pt-3">
                 <p className="px-4 pb-2 text-xs font-semibold uppercase tracking-[0.2em] text-foreground/40">
-                  Admin
+                  ผู้ดูแล
                 </p>
                 <div className="flex flex-col gap-2">
                   {adminLinks.map(({ href, label, icon: Icon }) => (
@@ -174,10 +240,17 @@ export default function Navbar() {
                       key={href}
                       href={href}
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className={`flex items-center gap-3 rounded-2xl px-4 py-3 transition-colors ${pathname === href ? 'bg-foreground text-background' : 'text-foreground/75 hover:bg-background hover:text-foreground'}`}
+                      className={`flex items-center justify-between gap-3 rounded-2xl px-4 py-3 transition-colors ${pathname === href ? 'bg-foreground text-background' : 'text-foreground/75 hover:bg-background hover:text-foreground'}`}
                     >
-                      <Icon className="h-4 w-4" />
-                      <span>{label}</span>
+                      <span className="flex items-center gap-3">
+                        <Icon className="h-4 w-4" />
+                        <span>{label}</span>
+                      </span>
+                      {href === USER_APPROVAL_PATH && pendingApprovalCount > 0 && (
+                        <span className={`inline-flex min-w-5 items-center justify-center rounded-full px-1.5 py-0.5 text-[11px] font-semibold leading-none ${pathname === href ? 'bg-white/20 text-white' : 'bg-red-500 text-white'}`}>
+                          {pendingApprovalLabel}
+                        </span>
+                      )}
                     </Link>
                   ))}
                 </div>
@@ -197,7 +270,7 @@ export default function Navbar() {
                     className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl border border-card-border px-4 py-3 text-foreground/75 transition-colors hover:bg-foreground hover:text-background"
                   >
                     <LogOut className="h-4 w-4" />
-                    Sign Out
+                    ออกจากระบบ
                   </button>
                 </>
               ) : (
@@ -209,7 +282,7 @@ export default function Navbar() {
                   className="flex items-center justify-center gap-2 rounded-2xl bg-foreground px-4 py-3 text-background font-semibold"
                 >
                   <LogIn className="h-4 w-4" />
-                  Sign In
+                  เข้าสู่ระบบ
                 </button>
               )}
             </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from 'framer-motion';
-import { Zap, ArrowDown } from 'lucide-react';
+import { ArrowDown } from 'lucide-react';
 
 export default function Hero() {
   return (
@@ -13,23 +13,12 @@ export default function Hero() {
 
       <div className="max-w-5xl mx-auto text-center">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <div className="inline-flex items-center gap-2 rounded-full border border-card-border bg-card px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-foreground/55 shadow-sm mb-8">
-            <Zap className="h-3.5 w-3.5 text-amber-500" />
-            Internal Portal Hub
-          </div>
-        </motion.div>
-
-        <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
         >
           <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-bold tracking-tight mb-6 leading-[1.05]">
-            PFS Portal.
+            Connected systems.
             <br />
             <span className="bg-gradient-to-r from-foreground/65 via-foreground/45 to-foreground/30 bg-clip-text text-transparent">
               One directory.
@@ -43,7 +32,7 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
         >
           <p className="text-lg md:text-xl text-foreground/55 mb-12 max-w-xl mx-auto font-medium leading-relaxed">
-            Explore Polyfoam Suvarnabhumi systems, dashboards, and SSO-enabled tools from one organized internal portal.
+            Explore Polyfoam Suvarnabhumi systems, dashboards, and SSO-enabled tools from one organized directory.
           </p>
         </motion.div>
 
