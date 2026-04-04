@@ -50,7 +50,7 @@ const SYSTEMS = [
     id: 'booking',
     title: 'Car Booking',
     description: 'Vehicle and fleet reservation management.',
-    url: 'https://polyfoampfs-bookingcar.vercel.app/',
+    url: 'https://pfs-bookingcar.vercel.app/',
     category: 'system',
     icon: Car,
     status: 'active',

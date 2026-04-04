@@ -56,12 +56,12 @@ export const DEFAULT_PORTALS: PortalDefinition[] = [
     id: 4,
     title: 'Car Booking',
     description: 'Vehicle and fleet reservation management.',
-    url: 'https://polyfoampfs-bookingcar.vercel.app/',
+    url: 'https://pfs-bookingcar.vercel.app/',
     category: 'system',
     icon: 'car',
     status: 'active',
     ssoSystemId: 'booking',
-    ssoTargetUrl: 'https://polyfoampfs-bookingcar.vercel.app/',
+    ssoTargetUrl: 'https://pfs-bookingcar.vercel.app/',
   },
   {
     id: 5,
@@ -109,11 +109,11 @@ export const SSO_CONFIG: Record<
   },
   'Car Booking': {
     ssoSystemId: 'booking',
-    ssoTargetUrl: 'https://polyfoampfs-bookingcar.vercel.app/',
+    ssoTargetUrl: 'https://pfs-bookingcar.vercel.app/',
   },
   'Fleet Booking': {
     ssoSystemId: 'booking',
-    ssoTargetUrl: 'https://polyfoampfs-bookingcar.vercel.app/',
+    ssoTargetUrl: 'https://pfs-bookingcar.vercel.app/',
   },
 }
 
