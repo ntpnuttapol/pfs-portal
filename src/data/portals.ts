@@ -60,6 +60,8 @@ export const DEFAULT_PORTALS: PortalDefinition[] = [
     category: 'system',
     icon: 'car',
     status: 'active',
+    ssoSystemId: 'booking',
+    ssoTargetUrl: 'https://polyfoampfs-bookingcar.vercel.app/',
   },
   {
     id: 5,
@@ -104,6 +106,14 @@ export const SSO_CONFIG: Record<
   'Project-Finishing': {
     ssoSystemId: 'project-finishing',
     ssoTargetUrl: 'https://production-dashboard-pink.vercel.app/login',
+  },
+  'Car Booking': {
+    ssoSystemId: 'booking',
+    ssoTargetUrl: 'https://polyfoampfs-bookingcar.vercel.app/',
+  },
+  'Fleet Booking': {
+    ssoSystemId: 'booking',
+    ssoTargetUrl: 'https://polyfoampfs-bookingcar.vercel.app/',
   },
 }
 

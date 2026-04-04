@@ -47,14 +47,14 @@ const SYSTEMS = [
     requiresMapping: true,
   },
   {
-    id: 'fleet-booking',
-    title: 'Fleet Booking',
+    id: 'booking',
+    title: 'Car Booking',
     description: 'Vehicle and fleet reservation management.',
     url: 'https://polyfoampfs-bookingcar.vercel.app/',
     category: 'system',
     icon: Car,
     status: 'active',
-    requiresMapping: false,
+    requiresMapping: true,
   },
   {
     id: 'moneybill-oil',
