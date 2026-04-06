@@ -32,8 +32,8 @@ export const siteUrl = createSiteUrl()
 export const siteOrigin = siteUrl.origin
 
 export const defaultOpenGraphImage = {
-  url: '/pfslogo.png',
-  width: 512,
-  height: 512,
-  alt: 'PFS Portal logo',
+  url: '/opengraph-image',
+  width: 1200,
+  height: 630,
+  alt: 'PFS Portal — ศูนย์รวมระบบภายในและการเข้าใช้งานผ่าน SSO',
 }
