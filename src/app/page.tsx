@@ -14,12 +14,30 @@ const homeStructuredData = {
       name: 'Polyfoam Suvarnabhumi',
       url: siteOrigin,
       logo: `${siteOrigin}/opengraph-image.png`,
+      sameAs: [],
     },
     {
       '@type': 'WebSite',
       name: siteName,
       url: siteOrigin,
       description: siteDescription,
+      inLanguage: 'th-TH',
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: `${siteOrigin}/?q={search_term_string}`,
+        'query-input': 'required name=search_term_string',
+      },
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'หน้าหลัก',
+          item: siteOrigin,
+        },
+      ],
     },
     {
       '@type': 'CollectionPage',

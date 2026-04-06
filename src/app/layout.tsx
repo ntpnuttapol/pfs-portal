@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Noto_Sans_Thai } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
@@ -19,6 +19,16 @@ const notoSansThai = Noto_Sans_Thai({
   display: "swap",
 });
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#111111' },
+  ],
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 export const metadata: Metadata = {
   metadataBase: siteUrl,
   applicationName: siteName,
@@ -27,8 +37,27 @@ export const metadata: Metadata = {
     template: `%s | ${siteName}`,
   },
   description: siteDescription,
+  keywords: [
+    'Polyfoam Suvarnabhumi',
+    'PFS Portal',
+    'ระบบภายใน',
+    'SSO',
+    'Single Sign-On',
+    'โพลีโฟม สุวรรณภูมิ',
+    'ศูนย์รวมระบบ',
+    'internal portal',
+  ],
+  authors: [{ name: 'Polyfoam Suvarnabhumi' }],
+  creator: 'Polyfoam Suvarnabhumi',
+  publisher: 'Polyfoam Suvarnabhumi',
+  formatDetection: {
+    telephone: false,
+    email: false,
+    address: false,
+  },
   openGraph: {
     type: "website",
+    locale: 'th_TH',
     siteName,
     title: siteTitle,
     description: siteDescription,
@@ -45,6 +74,13 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
 };
 
@@ -54,7 +90,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`scroll-smooth antialiased ${notoSansThai.variable}`}>
+    <html lang="th" className={`scroll-smooth antialiased ${notoSansThai.variable}`}>
       <body className="min-h-screen flex flex-col bg-background text-foreground">
         <a href="#main-content" className="skip-link">
           Skip to content
