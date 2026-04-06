@@ -57,14 +57,14 @@ const SYSTEMS = [
     requiresMapping: true,
   },
   {
-    id: 'moneybill-oil',
+    id: 'moneytrack',
     title: 'Moneybill-Oil',
     description: 'Fuel tracking and financial billing system.',
-    url: 'https://Polyfoampfs.com/moneytrack',
+    url: 'https://Polyfoampfs.com/moneytrack/login.php',
     category: 'system',
     icon: Fuel,
     status: 'active',
-    requiresMapping: false,
+    requiresMapping: true,
   },
   {
     id: 'pfs-website',

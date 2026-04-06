@@ -67,10 +67,12 @@ export const DEFAULT_PORTALS: PortalDefinition[] = [
     id: 5,
     title: 'Moneybill-Oil',
     description: 'Fuel tracking and financial billing system.',
-    url: 'https://Polyfoampfs.com/moneytrack',
+    url: 'https://Polyfoampfs.com/moneytrack/login.php',
     category: 'system',
     icon: 'fuel',
     status: 'active',
+    ssoSystemId: 'moneytrack',
+    ssoTargetUrl: 'https://Polyfoampfs.com/moneytrack/login.php',
   },
   {
     id: 6,
@@ -114,6 +116,10 @@ export const SSO_CONFIG: Record<
   'Fleet Booking': {
     ssoSystemId: 'booking',
     ssoTargetUrl: 'https://pfs-bookingcar.vercel.app/',
+  },
+  'Moneybill-Oil': {
+    ssoSystemId: 'moneytrack',
+    ssoTargetUrl: 'https://Polyfoampfs.com/moneytrack/login.php',
   },
 }
 
