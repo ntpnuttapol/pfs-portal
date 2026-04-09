@@ -5,8 +5,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
-import { User, Settings, Users, UserCog, Menu, X, ChevronDown, LogOut, LogIn } from 'lucide-react'
+import { User, Settings, Users, UserCog, Menu, X, ChevronDown, LogOut, LogIn, KeyRound } from 'lucide-react'
 import LoginModal from './LoginModal'
+import ChangePasswordModal from './ChangePasswordModal'
 
 const adminLinks = [
   { href: '/admin/user-approval', label: 'อนุมัติผู้ใช้', icon: Users },
@@ -19,10 +20,11 @@ const USER_APPROVAL_PATH = '/admin/user-approval'
 export default function Navbar() {
   const pathname = usePathname()
   const router = useRouter()
-  const { user, isLoading, isAdmin, signOut, isLoginModalOpen, setIsLoginModalOpen } = useAuth()
+  const { user, isLoading, isAdmin, mustChangePassword, signOut, isLoginModalOpen, setIsLoginModalOpen } = useAuth()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false)
   const [pendingApprovalCount, setPendingApprovalCount] = useState(0)
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false)
 
   const linkClassName = (active: boolean) =>
     `rounded-full px-3 py-2 transition-colors ${active ? 'bg-foreground text-background' : 'text-foreground/70 hover:bg-foreground/5 hover:text-foreground'}`
@@ -60,6 +62,12 @@ export default function Navbar() {
     router.push('/')
   }
 
+  const handleOpenChangePassword = () => {
+    setIsAdminMenuOpen(false)
+    setIsMobileMenuOpen(false)
+    setIsChangePasswordOpen(true)
+  }
+
   useEffect(() => {
     void fetchPendingApprovalCount()
   }, [fetchPendingApprovalCount])
@@ -84,6 +92,12 @@ export default function Navbar() {
       window.removeEventListener('focus', handleWindowFocus)
     }
   }, [fetchPendingApprovalCount, isAdmin, user])
+
+  useEffect(() => {
+    if (user && mustChangePassword) {
+      setIsChangePasswordOpen(true)
+    }
+  }, [mustChangePassword, user])
 
   return (
     <>
@@ -180,6 +194,15 @@ export default function Navbar() {
 
               <button
                 type="button"
+                onClick={handleOpenChangePassword}
+                className="flex items-center gap-2 rounded-full border border-card-border px-4 py-2 text-foreground/70 transition-colors hover:bg-background"
+              >
+                <KeyRound className="h-4 w-4" />
+                เปลี่ยนรหัสผ่าน
+              </button>
+
+              <button
+                type="button"
                 onClick={handleSignOut}
                 className="flex items-center gap-2 rounded-full border border-card-border px-4 py-2 text-foreground/70 transition-colors hover:bg-foreground hover:text-background"
               >
@@ -266,6 +289,14 @@ export default function Navbar() {
                   </div>
                   <button
                     type="button"
+                    onClick={handleOpenChangePassword}
+                    className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl border border-card-border px-4 py-3 text-foreground/75 transition-colors hover:bg-background hover:text-foreground"
+                  >
+                    <KeyRound className="h-4 w-4" />
+                    เปลี่ยนรหัสผ่าน
+                  </button>
+                  <button
+                    type="button"
                     onClick={handleSignOut}
                     className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl border border-card-border px-4 py-3 text-foreground/75 transition-colors hover:bg-foreground hover:text-background"
                   >
@@ -295,6 +326,11 @@ export default function Navbar() {
     <LoginModal 
       isOpen={isLoginModalOpen} 
       onClose={() => setIsLoginModalOpen(false)} 
+    />
+    <ChangePasswordModal
+      isOpen={isChangePasswordOpen}
+      onClose={() => setIsChangePasswordOpen(false)}
+      forceChange={mustChangePassword}
     />
     </>
   )

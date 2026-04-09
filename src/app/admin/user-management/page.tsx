@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { AdminAccessDenied, AdminAlert, AdminEmptyState, AdminLoadingState } from '@/components/admin/AdminState'
-import { Shield, Users, Edit2, Save, X, UserPlus } from 'lucide-react'
+import { Shield, Users, Edit2, Save, X, UserPlus, KeyRound, Copy, Check } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { ADMIN_SYSTEMS } from '@/lib/system-access'
 
@@ -35,6 +35,14 @@ export default function UserManagementPage() {
   const [editedUsername, setEditedUsername] = useState<string>('')
   const [successMessage, setSuccessMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
+  const [resettingUser, setResettingUser] = useState<string | null>(null)
+  const [copiedTempPassword, setCopiedTempPassword] = useState(false)
+  const [resetPasswordResult, setResetPasswordResult] = useState<{
+    userId: string
+    username: string
+    fullName: string
+    temporaryPassword: string
+  } | null>(null)
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -106,6 +114,61 @@ export default function UserManagementPage() {
     setEditedRoles({})
     setEditedUsername('')
     setErrorMessage('')
+  }
+
+  const handleResetPassword = async (targetUser: User) => {
+    const confirmed = window.confirm(
+      `รีเซ็ตรหัสผ่านของ ${targetUser.full_name || targetUser.username} ใช่หรือไม่?\n\nระบบจะสร้างรหัสชั่วคราวใหม่ และบังคับให้ผู้ใช้เปลี่ยนรหัสหลังล็อกอินครั้งถัดไป`
+    )
+
+    if (!confirmed) {
+      return
+    }
+
+    setResettingUser(targetUser.id)
+    setErrorMessage('')
+    setSuccessMessage('')
+    setCopiedTempPassword(false)
+
+    try {
+      const response = await fetch(`/api/admin/users/${targetUser.id}/reset-password`, {
+        method: 'POST',
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to reset password')
+      }
+
+      setResetPasswordResult({
+        userId: data.user.id,
+        username: data.user.username,
+        fullName: data.user.full_name || data.user.username,
+        temporaryPassword: data.temporaryPassword,
+      })
+      setSuccessMessage('Temporary password generated successfully')
+    } catch (error) {
+      console.error('Error resetting password:', error)
+      setErrorMessage(error instanceof Error ? error.message : 'Failed to reset password')
+    } finally {
+      setResettingUser(null)
+    }
+  }
+
+  const handleCopyTemporaryPassword = async () => {
+    if (!resetPasswordResult?.temporaryPassword) {
+      return
+    }
+
+    try {
+      await navigator.clipboard.writeText(resetPasswordResult.temporaryPassword)
+      setCopiedTempPassword(true)
+      window.setTimeout(() => setCopiedTempPassword(false), 2000)
+    } catch (error) {
+      console.error('Failed to copy temporary password:', error)
+      setErrorMessage('Unable to copy the temporary password. Please copy it manually.')
+    }
   }
 
   const getRoleBadge = (role: string) => {
@@ -180,6 +243,35 @@ export default function UserManagementPage() {
         {errorMessage && (
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
             <AdminAlert tone="error" title="Unable to load user access" description={errorMessage} />
+          </motion.div>
+        )}
+
+        {resetPasswordResult && (
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
+            <div className="rounded-3xl border border-amber-200 bg-amber-50 p-5 shadow-sm">
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-amber-900">Temporary password ready</p>
+                  <p className="mt-1 text-sm leading-relaxed text-amber-800">
+                    ส่งรหัสนี้ให้ <strong>{resetPasswordResult.fullName}</strong> (@{resetPasswordResult.username}) แล้วให้เข้าสู่ระบบด้วยรหัสชั่วคราว จากนั้นระบบจะบังคับให้ตั้งรหัสผ่านใหม่ทันที
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleCopyTemporaryPassword}
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-amber-300 bg-white px-4 py-2 text-sm font-medium text-amber-900 transition hover:bg-amber-100"
+                >
+                  {copiedTempPassword ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  {copiedTempPassword ? 'Copied' : 'Copy password'}
+                </button>
+              </div>
+              <div className="mt-4 rounded-2xl border border-amber-200 bg-white px-4 py-3">
+                <div className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-700">Temporary Password</div>
+                <div className="mt-2 break-all font-mono text-lg font-semibold text-foreground">
+                  {resetPasswordResult.temporaryPassword}
+                </div>
+              </div>
+            </div>
           </motion.div>
         )}
 
@@ -300,12 +392,27 @@ export default function UserManagementPage() {
                             </button>
                           </div>
                         ) : (
-                          <button
-                            onClick={() => handleEdit(user)}
-                            className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-xl transition-colors"
-                          >
-                            <Edit2 className="w-4 h-4" />
-                          </button>
+                          <div className="flex items-center justify-center gap-2">
+                            <button
+                              onClick={() => handleResetPassword(user)}
+                              disabled={resettingUser === user.id}
+                              className="p-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+                              title="Reset password"
+                            >
+                              {resettingUser === user.id ? (
+                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                              ) : (
+                                <KeyRound className="w-4 h-4" />
+                              )}
+                            </button>
+                            <button
+                              onClick={() => handleEdit(user)}
+                              className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-xl transition-colors"
+                              title="Edit permissions"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                          </div>
                         )}
                       </td>
                     </tr>

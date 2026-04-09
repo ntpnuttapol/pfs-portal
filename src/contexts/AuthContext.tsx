@@ -12,8 +12,10 @@ type AuthContextType = {
   isLoading: boolean
   role: string | null
   isAdmin: boolean
+  mustChangePassword: boolean
   signIn: (username: string, password: string) => Promise<{ error: Error | null }>
   signUp: (username: string, email: string, password: string, fullName: string) => Promise<{ error: Error | null; pendingApproval?: boolean; message?: string }>
+  changePassword: (newPassword: string) => Promise<{ error: Error | null }>
   signOut: () => Promise<void>
   isLoginModalOpen: boolean
   setIsLoginModalOpen: (isOpen: boolean) => void
@@ -110,6 +112,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await supabase.auth.signOut()
   }
 
+  const changePassword = async (newPassword: string) => {
+    const nextUserMetadata = {
+      ...(user?.user_metadata ?? {}),
+      must_change_password: false,
+      temporary_password_issued_at: null,
+      temporary_password_reset_by: null,
+    }
+
+    const { data, error } = await supabase.auth.updateUser({
+      password: newPassword,
+      data: nextUserMetadata,
+    })
+
+    if (!error && data.user) {
+      setUser(data.user)
+      setSession((currentSession) => (
+        currentSession ? { ...currentSession, user: data.user } : currentSession
+      ))
+    }
+
+    return { error }
+  }
+
   // NEW: Sign Up function - Creates a request for admin approval instead of immediate user creation
   const signUp = async (username: string, email: string, password: string, fullName: string) => {
     try {
@@ -188,8 +213,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isLoading,
     role,
     isAdmin: role === 'admin',
+    mustChangePassword: Boolean(user?.user_metadata?.must_change_password),
     signIn,
     signUp,
+    changePassword,
     signOut,
     isLoginModalOpen,
     setIsLoginModalOpen,
