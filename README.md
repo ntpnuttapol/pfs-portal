@@ -39,6 +39,8 @@ NEXT_PUBLIC_APP_URL=https://polyfoampfs-hub.vercel.app
 
 The project is deployed on Vercel. Use the release checklist in [DEPLOYMENT.md](/Users/mynutntp/Desktop/PFS-Portal/DEPLOYMENT.md) after each production deploy.
 
+For Plesk-based self-hosting, use [PLESK_DEPLOYMENT.md](/Users/mynutntp/Desktop/PFS-Portal/PLESK_DEPLOYMENT.md).
+
 Key live checks:
 
 - `/robots.txt`

@@ -6,8 +6,12 @@
     "dev": "next dev --turbo",
     "dev:all": "concurrently -n \"PORTAL,MOLD,HEALTH,PROD\" -c \"blue,green,cyan,magenta\" \"npm run dev\" \"cd ../Moldshop && npm run dev\" \"cd ../Hr-employee/employee-health-system && npm run dev\" \"cd ../Project-Finishing/production-dashboard && PORT=3001 npm run dev\"",
     "build": "next build",
-    "start": "next start",
+    "start": "node server.js",
+    "start:next": "next start",
     "lint": "eslint"
+  },
+  "engines": {
+    "node": ">=20.9.0"
   },
   "dependencies": {
     "@supabase/ssr": "^0.9.0",
