@@ -30,7 +30,7 @@ const SYSTEMS = [
     id: 'moldshop',
     title: 'Moldshop',
     description: 'Management system for mold maintenance and work orders.',
-    url: 'https://moldshop.vercel.app/',
+    url: 'https://moldshop.pfs-system.com/',
     category: 'system',
     icon: Settings,
     status: 'active',

@@ -173,7 +173,7 @@ export default function SSODocsPage() {
                   <pre className="text-xs text-slate-700 dark:text-slate-300 overflow-x-auto">
 {`{
   "systemId": "moldshop",
-  "targetUrl": "https://moldshop.vercel.app/",
+  "targetUrl": "https://moldshop.pfs-system.com/",
   "userMapping": {
     "localUsername": "john.doe"
   }

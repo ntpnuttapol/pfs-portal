@@ -216,7 +216,7 @@ Content-Type: application/json
 
 {
   "systemId": "moldshop",
-  "targetUrl": "https://moldshop.vercel.app/",
+  "targetUrl": "https://moldshop.pfs-system.com/",
   "userMapping": {
     "localUsername": "john.doe"
   }
@@ -228,7 +228,7 @@ Response:
 {
   "success": true,
   "token": "eyJhbG...",
-  "redirectUrl": "https://moldshop.vercel.app/?sso_token=eyJhbG...",
+  "redirectUrl": "https://moldshop.pfs-system.com/?sso_token=eyJhbG...",
   "expiresIn": "5 minutes"
 }
 ```

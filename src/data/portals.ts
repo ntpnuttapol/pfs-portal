@@ -34,12 +34,12 @@ export const DEFAULT_PORTALS: PortalDefinition[] = [
     id: 2,
     title: 'Moldshop',
     description: 'Management system for mold maintenance and work orders.',
-    url: 'https://moldshop.vercel.app/',
+    url: 'https://moldshop.pfs-system.com/',
     category: 'system',
     icon: 'settings',
     status: 'active',
     ssoSystemId: 'moldshop',
-    ssoTargetUrl: 'https://moldshop.vercel.app/login',
+    ssoTargetUrl: 'https://moldshop.pfs-system.com/login',
   },
   {
     id: 3,
@@ -99,7 +99,7 @@ export const SSO_CONFIG: Record<
   },
   Moldshop: {
     ssoSystemId: 'moldshop',
-    ssoTargetUrl: 'https://moldshop.vercel.app/login',
+    ssoTargetUrl: 'https://moldshop.pfs-system.com/login',
   },
   'DX Project': {
     ssoSystemId: 'project-finishing',
