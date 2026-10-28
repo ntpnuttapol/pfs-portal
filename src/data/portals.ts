@@ -108,8 +108,14 @@ export const SSO_CONFIG: Record<
   },
 }
 
+// Systems that left the Hub but may still have a row in the Supabase portals table
+const RETIRED_PORTAL_TITLES = new Set(['moldshop'])
+
+const isRetired = (portal: PortalDefinition) =>
+  RETIRED_PORTAL_TITLES.has(portal.title.trim().toLowerCase())
+
 export function mergePortalData(portals: PortalDefinition[]) {
-  const merged = portals.map((portal) => ({
+  const merged = portals.filter((portal) => !isRetired(portal)).map((portal) => ({
     ...portal,
     title: normalizePortalTitle(portal.title),
     ...(SSO_CONFIG[normalizePortalTitle(portal.title)] || SSO_CONFIG[portal.title] || {}),
