@@ -1,5 +1,4 @@
 export const ADMIN_SYSTEMS = [
-  { id: 'moldshop', name: 'Moldshop', icon: '🏭' },
   { id: 'hr-employee', name: 'HR Employee', icon: '🏥' },
   { id: 'polyfoam', name: 'Polyfoam', icon: '🏢' },
   { id: 'booking', name: 'Booking Car', icon: '🚗' },

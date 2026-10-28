@@ -31,7 +31,7 @@ const validateSSOToken = async (token) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ 
       token,
-      systemId: 'your-system-id' // e.g., 'moldshop', 'hr-employee'
+      systemId: 'your-system-id' // e.g., 'hr-employee'
     }),
   });
 
@@ -215,8 +215,8 @@ Authorization: Bearer <user-session>
 Content-Type: application/json
 
 {
-  "systemId": "moldshop",
-  "targetUrl": "https://moldshop.pfs-system.com/",
+  "systemId": "hr-employee",
+  "targetUrl": "https://pfs-system.vercel.app/login",
   "userMapping": {
     "localUsername": "john.doe"
   }
@@ -228,7 +228,7 @@ Response:
 {
   "success": true,
   "token": "eyJhbG...",
-  "redirectUrl": "https://moldshop.pfs-system.com/?sso_token=eyJhbG...",
+  "redirectUrl": "https://pfs-system.vercel.app/login?sso_token=eyJhbG...",
   "expiresIn": "5 minutes"
 }
 ```

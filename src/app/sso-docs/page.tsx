@@ -172,8 +172,8 @@ export default function SSODocsPage() {
                   <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">Request Body:</p>
                   <pre className="text-xs text-slate-700 dark:text-slate-300 overflow-x-auto">
 {`{
-  "systemId": "moldshop",
-  "targetUrl": "https://moldshop.pfs-system.com/",
+  "systemId": "hr-employee",
+  "targetUrl": "https://pfs-system.vercel.app/login",
   "userMapping": {
     "localUsername": "john.doe"
   }

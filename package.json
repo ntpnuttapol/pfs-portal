@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",
-    "dev:all": "concurrently -n \"PORTAL,MOLD,HEALTH,PROD\" -c \"blue,green,cyan,magenta\" \"npm run dev\" \"cd ../Moldshop && npm run dev\" \"cd ../Hr-employee/employee-health-system && npm run dev\" \"cd ../Project-Finishing/production-dashboard && PORT=3001 npm run dev\"",
+    "dev:all": "concurrently -n \"PORTAL,HEALTH,PROD\" -c \"blue,cyan,magenta\" \"npm run dev\" \"cd ../Hr-employee/employee-health-system && npm run dev\" \"cd ../Project-Finishing/production-dashboard && PORT=3001 npm run dev\"",
     "build": "next build",
     "start": "node server.js",
     "start:next": "next start",
